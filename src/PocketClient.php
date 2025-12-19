@@ -10,14 +10,14 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException as GuzzleServerException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Yannelli\Pocket\Exceptions\AuthenticationException;
 use Yannelli\Pocket\Exceptions\NotFoundException;
 use Yannelli\Pocket\Exceptions\PocketException;
 use Yannelli\Pocket\Exceptions\RateLimitException;
 use Yannelli\Pocket\Exceptions\ServerException;
 use Yannelli\Pocket\Exceptions\ValidationException;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class PocketClient
 {
