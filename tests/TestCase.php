@@ -1,37 +1,31 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace PocketLabs\Pocket\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use VendorName\Skeleton\SkeletonServiceProvider;
+use PocketLabs\Pocket\PocketServiceProvider;
 
 class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
         parent::setUp();
-
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        );
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            SkeletonServiceProvider::class,
+            PocketServiceProvider::class,
         ];
     }
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'testing');
-
-        /*
-         foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/../database/migrations') as $migration) {
-            (include $migration->getRealPath())->up();
-         }
-         */
+        config()->set('pocket.api_key', 'pk_test_key');
+        config()->set('pocket.base_url', 'https://app.heypocket.com');
+        config()->set('pocket.api_version', 'v1');
+        config()->set('pocket.timeout', 30);
+        config()->set('pocket.retry.times', 3);
+        config()->set('pocket.retry.sleep', 1000);
     }
 }
