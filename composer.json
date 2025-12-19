@@ -1,48 +1,50 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "pocket-labs/pocket-laravel",
+    "description": "Laravel SDK for the Pocket API - Access recordings, transcripts, summaries, and more",
     "keywords": [
-        ":vendor_name",
+        "pocket",
         "laravel",
-        ":package_slug"
+        "sdk",
+        "api",
+        "recordings",
+        "transcription"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/pocket-labs/pocket-laravel",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Pocket Labs",
+            "email": "support@heypocket.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.2",
+        "guzzlehttp/guzzle": "^7.8",
         "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^11.0||^12.0"
+        "illuminate/contracts": "^10.0||^11.0||^12.0",
+        "illuminate/support": "^10.0||^11.0||^12.0"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
         "nunomaduro/collision": "^8.8",
         "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^10.0.0||^9.0.0",
-        "pestphp/pest": "^4.0",
-        "pestphp/pest-plugin-arch": "^4.0",
-        "pestphp/pest-plugin-laravel": "^4.0",
+        "orchestra/testbench": "^10.0.0||^9.0.0||^8.0.0",
+        "pestphp/pest": "^3.0||^4.0",
+        "pestphp/pest-plugin-arch": "^3.0||^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0||^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "spatie/laravel-ray": "^1.35"
+        "phpstan/phpstan-phpunit": "^2.0"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "PocketLabs\\Pocket\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
-            "Workbench\\App\\": "workbench/app/"
+            "PocketLabs\\Pocket\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -63,10 +65,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "PocketLabs\\Pocket\\PocketServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "Pocket": "PocketLabs\\Pocket\\Facades\\Pocket"
             }
         }
     },
