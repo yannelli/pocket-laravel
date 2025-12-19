@@ -30,7 +30,7 @@ final readonly class Folder implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param array<array> $items
+     * @param  array<array>  $items
      * @return array<Folder>
      */
     public static function collection(array $items): array

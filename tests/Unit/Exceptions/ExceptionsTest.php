@@ -27,14 +27,14 @@ it('can create pocket exception from response', function () {
 });
 
 it('can create authentication exception', function () {
-    $exception = new AuthenticationException();
+    $exception = new AuthenticationException;
 
     expect($exception->getMessage())->toBe('Invalid API key')
         ->and($exception->getCode())->toBe(401);
 });
 
 it('can create not found exception', function () {
-    $exception = new NotFoundException();
+    $exception = new NotFoundException;
 
     expect($exception->getMessage())->toBe('Resource not found')
         ->and($exception->getCode())->toBe(404);
@@ -59,7 +59,7 @@ it('can create validation exception', function () {
 });
 
 it('can create server exception', function () {
-    $exception = new ServerException();
+    $exception = new ServerException;
 
     expect($exception->getMessage())->toBe('Internal server error')
         ->and($exception->getCode())->toBe(500);

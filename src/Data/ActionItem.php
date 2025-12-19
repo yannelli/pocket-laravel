@@ -34,7 +34,7 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param array<array> $items
+     * @param  array<array>  $items
      * @return array<ActionItem>
      */
     public static function collection(array $items): array

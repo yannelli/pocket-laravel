@@ -10,7 +10,7 @@ use JsonSerializable;
 final readonly class Transcript implements Arrayable, JsonSerializable
 {
     /**
-     * @param array<TranscriptSegment> $segments
+     * @param  array<TranscriptSegment>  $segments
      */
     public function __construct(
         public string $text,

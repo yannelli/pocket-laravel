@@ -27,7 +27,7 @@ final readonly class TranscriptSegment implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param array<array> $items
+     * @param  array<array>  $items
      * @return array<TranscriptSegment>
      */
     public static function collection(array $items): array

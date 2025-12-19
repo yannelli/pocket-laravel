@@ -10,7 +10,7 @@ use JsonSerializable;
 final readonly class Summary implements Arrayable, JsonSerializable
 {
     /**
-     * @param array<SummarySection> $sections
+     * @param  array<SummarySection>  $sections
      */
     public function __construct(
         public string $title,

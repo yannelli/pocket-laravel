@@ -23,7 +23,7 @@ final readonly class SummarySection implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param array<array> $items
+     * @param  array<array>  $items
      * @return array<SummarySection>
      */
     public static function collection(array $items): array

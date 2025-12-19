@@ -27,7 +27,7 @@ final readonly class Tag implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param array<array> $items
+     * @param  array<array>  $items
      * @return array<Tag>
      */
     public static function collection(array $items): array

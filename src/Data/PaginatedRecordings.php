@@ -17,7 +17,7 @@ use Traversable;
 final readonly class PaginatedRecordings implements Arrayable, Countable, IteratorAggregate, JsonSerializable
 {
     /**
-     * @param array<Recording> $data
+     * @param  array<Recording>  $data
      */
     public function __construct(
         public array $data,

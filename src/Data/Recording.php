@@ -12,8 +12,8 @@ use PocketLabs\Pocket\Enums\RecordingState;
 final readonly class Recording implements Arrayable, JsonSerializable
 {
     /**
-     * @param array<Tag> $tags
-     * @param array<ActionItem> $actionItems
+     * @param  array<Tag>  $tags
+     * @param  array<ActionItem>  $actionItems
      */
     public function __construct(
         public string $id,
@@ -49,7 +49,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param array<array> $items
+     * @param  array<array>  $items
      * @return array<Recording>
      */
     public static function collection(array $items): array
