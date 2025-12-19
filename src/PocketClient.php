@@ -35,14 +35,18 @@ class PocketClient
         string $apiVersion = 'v1',
         int $timeout = 30,
         int $retryTimes = 3,
-        int $retrySleep = 1000
+        int $retrySleep = 1000,
+        ?HandlerStack $handler = null
     ) {
         $this->apiKey = $apiKey;
         $this->baseUrl = rtrim($baseUrl, '/');
         $this->apiVersion = $apiVersion;
 
-        $stack = HandlerStack::create();
-        $stack->push($this->retryMiddleware($retryTimes, $retrySleep));
+        $stack = $handler ?? HandlerStack::create();
+
+        if ($handler === null) {
+            $stack->push($this->retryMiddleware($retryTimes, $retrySleep));
+        }
 
         $this->httpClient = new Client([
             'base_uri' => $this->baseUrl,
