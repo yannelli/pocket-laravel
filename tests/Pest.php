@@ -1,5 +1,5 @@
 <?php
 
-use PocketLabs\Pocket\Tests\TestCase;
+use Yannelli\Pocket\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket\Enums;
+namespace Yannelli\Pocket\Enums;
 
 enum ActionItemPriority: string
 {

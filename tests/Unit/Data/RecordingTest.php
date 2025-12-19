@@ -1,11 +1,11 @@
 <?php
 
-use PocketLabs\Pocket\Data\ActionItem;
-use PocketLabs\Pocket\Data\Recording;
-use PocketLabs\Pocket\Data\Summary;
-use PocketLabs\Pocket\Data\Tag;
-use PocketLabs\Pocket\Data\Transcript;
-use PocketLabs\Pocket\Enums\RecordingState;
+use Yannelli\Pocket\Data\ActionItem;
+use Yannelli\Pocket\Data\Recording;
+use Yannelli\Pocket\Data\Summary;
+use Yannelli\Pocket\Data\Tag;
+use Yannelli\Pocket\Data\Transcript;
+use Yannelli\Pocket\Enums\RecordingState;
 
 it('can create a recording from array', function () {
     $recording = Recording::fromArray([

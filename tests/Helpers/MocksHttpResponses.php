@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket\Tests\Helpers;
+namespace Yannelli\Pocket\Tests\Helpers;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use PocketLabs\Pocket\Pocket;
-use PocketLabs\Pocket\PocketClient;
+use Yannelli\Pocket\Pocket;
+use Yannelli\Pocket\PocketClient;
 
 trait MocksHttpResponses
 {

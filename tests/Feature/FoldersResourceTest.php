@@ -4,9 +4,9 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use PocketLabs\Pocket\Data\Folder;
-use PocketLabs\Pocket\PocketClient;
-use PocketLabs\Pocket\Resources\FoldersResource;
+use Yannelli\Pocket\Data\Folder;
+use Yannelli\Pocket\PocketClient;
+use Yannelli\Pocket\Resources\FoldersResource;
 
 function createFoldersMockClient(array $responses, array &$history = []): PocketClient
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace PocketLabs\Pocket\Tests;
+namespace Yannelli\Pocket\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
-use PocketLabs\Pocket\PocketServiceProvider;
+use Yannelli\Pocket\PocketServiceProvider;
 
 class TestCase extends Orchestra
 {

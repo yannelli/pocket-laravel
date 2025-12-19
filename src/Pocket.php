@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket;
+namespace Yannelli\Pocket;
 
-use PocketLabs\Pocket\Resources\FoldersResource;
-use PocketLabs\Pocket\Resources\RecordingsResource;
-use PocketLabs\Pocket\Resources\TagsResource;
+use Yannelli\Pocket\Resources\FoldersResource;
+use Yannelli\Pocket\Resources\RecordingsResource;
+use Yannelli\Pocket\Resources\TagsResource;
 
 class Pocket
 {

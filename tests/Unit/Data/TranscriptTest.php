@@ -1,7 +1,7 @@
 <?php
 
-use PocketLabs\Pocket\Data\Transcript;
-use PocketLabs\Pocket\Data\TranscriptSegment;
+use Yannelli\Pocket\Data\Transcript;
+use Yannelli\Pocket\Data\TranscriptSegment;
 
 it('can create a transcript from array', function () {
     $transcript = Transcript::fromArray([

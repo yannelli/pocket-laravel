@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket\Data;
+namespace Yannelli\Pocket\Data;
 
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;

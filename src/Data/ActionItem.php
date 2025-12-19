@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket\Data;
+namespace Yannelli\Pocket\Data;
 
 use DateTimeImmutable;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
-use PocketLabs\Pocket\Enums\ActionItemPriority;
-use PocketLabs\Pocket\Enums\ActionItemStatus;
+use Yannelli\Pocket\Enums\ActionItemPriority;
+use Yannelli\Pocket\Enums\ActionItemStatus;
 
 final readonly class ActionItem implements Arrayable, JsonSerializable
 {

@@ -4,14 +4,14 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use PocketLabs\Pocket\Exceptions\AuthenticationException;
-use PocketLabs\Pocket\Exceptions\NotFoundException;
-use PocketLabs\Pocket\Exceptions\PocketException;
-use PocketLabs\Pocket\Exceptions\RateLimitException;
-use PocketLabs\Pocket\Exceptions\ServerException;
-use PocketLabs\Pocket\Exceptions\ValidationException;
-use PocketLabs\Pocket\PocketClient;
-use PocketLabs\Pocket\Resources\RecordingsResource;
+use Yannelli\Pocket\Exceptions\AuthenticationException;
+use Yannelli\Pocket\Exceptions\NotFoundException;
+use Yannelli\Pocket\Exceptions\PocketException;
+use Yannelli\Pocket\Exceptions\RateLimitException;
+use Yannelli\Pocket\Exceptions\ServerException;
+use Yannelli\Pocket\Exceptions\ValidationException;
+use Yannelli\Pocket\PocketClient;
+use Yannelli\Pocket\Resources\RecordingsResource;
 
 function createErrorMockClient(array $responses, array &$history = []): PocketClient
 {

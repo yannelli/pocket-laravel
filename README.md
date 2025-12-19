@@ -1,8 +1,8 @@
 # Pocket Laravel SDK
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/pocket-labs/pocket-laravel.svg?style=flat-square)](https://packagist.org/packages/pocket-labs/pocket-laravel)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/pocket-labs/pocket-laravel/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/pocket-labs/pocket-laravel/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/pocket-labs/pocket-laravel.svg?style=flat-square)](https://packagist.org/packages/pocket-labs/pocket-laravel)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/yannelli/pocket-laravel-sdk.svg?style=flat-square)](https://packagist.org/packages/yannelli/pocket-laravel-sdk)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/yannelli/pocket-laravel-sdk/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/yannelli/pocket-laravel-sdk/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/yannelli/pocket-laravel-sdk.svg?style=flat-square)](https://packagist.org/packages/yannelli/pocket-laravel-sdk)
 
 The official Laravel SDK for the [Pocket API](https://app.heypocket.com). Access your recordings, transcripts, summaries, and action items with a clean, fluent interface.
 
@@ -11,7 +11,7 @@ The official Laravel SDK for the [Pocket API](https://app.heypocket.com). Access
 You can install the package via composer:
 
 ```bash
-composer require pocket-labs/pocket-laravel
+composer require yannelli/pocket-laravel-sdk
 ```
 
 You can publish the config file with:
@@ -46,7 +46,7 @@ POCKET_API_KEY=pk_your_api_key_here
 ### Using the Facade
 
 ```php
-use PocketLabs\Pocket\Facades\Pocket;
+use Yannelli\Pocket\Facades\Pocket;
 
 // List recordings
 $recordings = Pocket::recordings()->list();
@@ -64,7 +64,7 @@ $tags = Pocket::tags()->list();
 ### Using Dependency Injection
 
 ```php
-use PocketLabs\Pocket\Pocket;
+use Yannelli\Pocket\Pocket;
 
 class RecordingController extends Controller
 {
@@ -84,7 +84,7 @@ class RecordingController extends Controller
 ### List Recordings
 
 ```php
-use PocketLabs\Pocket\Facades\Pocket;
+use Yannelli\Pocket\Facades\Pocket;
 
 // Basic listing with pagination
 $recordings = Pocket::recordings()->list();
@@ -215,7 +215,7 @@ if ($recording->isFailed()) {
 ## Folders
 
 ```php
-use PocketLabs\Pocket\Facades\Pocket;
+use Yannelli\Pocket\Facades\Pocket;
 
 // List all folders
 $folders = Pocket::folders()->list();
@@ -233,7 +233,7 @@ $defaultFolder = Pocket::folders()->default();
 ## Tags
 
 ```php
-use PocketLabs\Pocket\Facades\Pocket;
+use Yannelli\Pocket\Facades\Pocket;
 
 // List all tags (ordered by usage)
 $tags = Pocket::tags()->list();
@@ -253,12 +253,12 @@ $tag = Pocket::tags()->findByName('Important');
 All API responses are returned as strongly-typed data objects:
 
 ```php
-use PocketLabs\Pocket\Data\Recording;
-use PocketLabs\Pocket\Data\Folder;
-use PocketLabs\Pocket\Data\Tag;
-use PocketLabs\Pocket\Data\Transcript;
-use PocketLabs\Pocket\Data\Summary;
-use PocketLabs\Pocket\Data\ActionItem;
+use Yannelli\Pocket\Data\Recording;
+use Yannelli\Pocket\Data\Folder;
+use Yannelli\Pocket\Data\Tag;
+use Yannelli\Pocket\Data\Transcript;
+use Yannelli\Pocket\Data\Summary;
+use Yannelli\Pocket\Data\ActionItem;
 
 // All objects implement Arrayable and JsonSerializable
 $array = $recording->toArray();
@@ -268,13 +268,13 @@ $json = json_encode($recording);
 ## Error Handling
 
 ```php
-use PocketLabs\Pocket\Facades\Pocket;
-use PocketLabs\Pocket\Exceptions\AuthenticationException;
-use PocketLabs\Pocket\Exceptions\NotFoundException;
-use PocketLabs\Pocket\Exceptions\RateLimitException;
-use PocketLabs\Pocket\Exceptions\ValidationException;
-use PocketLabs\Pocket\Exceptions\ServerException;
-use PocketLabs\Pocket\Exceptions\PocketException;
+use Yannelli\Pocket\Facades\Pocket;
+use Yannelli\Pocket\Exceptions\AuthenticationException;
+use Yannelli\Pocket\Exceptions\NotFoundException;
+use Yannelli\Pocket\Exceptions\RateLimitException;
+use Yannelli\Pocket\Exceptions\ValidationException;
+use Yannelli\Pocket\Exceptions\ServerException;
+use Yannelli\Pocket\Exceptions\PocketException;
 
 try {
     $recording = Pocket::recordings()->get('rec_123');
@@ -326,7 +326,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Pocket Labs](https://github.com/pocket-labs)
+- [Ryan Yannelli](https://github.com/yannelli)
 - [All Contributors](../../contributors)
 
 ## License

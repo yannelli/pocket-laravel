@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket\Resources;
+namespace Yannelli\Pocket\Resources;
 
 use DateTimeInterface;
-use PocketLabs\Pocket\Data\PaginatedRecordings;
-use PocketLabs\Pocket\Data\Recording;
-use PocketLabs\Pocket\Exceptions\PocketException;
-use PocketLabs\Pocket\PocketClient;
+use Yannelli\Pocket\Data\PaginatedRecordings;
+use Yannelli\Pocket\Data\Recording;
+use Yannelli\Pocket\Exceptions\PocketException;
+use Yannelli\Pocket\PocketClient;
 
 class RecordingsResource
 {

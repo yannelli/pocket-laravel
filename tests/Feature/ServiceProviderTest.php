@@ -1,7 +1,7 @@
 <?php
 
-use PocketLabs\Pocket\Facades\Pocket;
-use PocketLabs\Pocket\Pocket as PocketClass;
+use Yannelli\Pocket\Facades\Pocket;
+use Yannelli\Pocket\Pocket as PocketClass;
 
 it('registers the pocket service', function () {
     expect(app()->bound(PocketClass::class))->toBeTrue();
@@ -18,13 +18,13 @@ it('can use the facade', function () {
 });
 
 it('can access recordings via facade', function () {
-    expect(Pocket::recordings())->toBeInstanceOf(\PocketLabs\Pocket\Resources\RecordingsResource::class);
+    expect(Pocket::recordings())->toBeInstanceOf(\Yannelli\Pocket\Resources\RecordingsResource::class);
 });
 
 it('can access folders via facade', function () {
-    expect(Pocket::folders())->toBeInstanceOf(\PocketLabs\Pocket\Resources\FoldersResource::class);
+    expect(Pocket::folders())->toBeInstanceOf(\Yannelli\Pocket\Resources\FoldersResource::class);
 });
 
 it('can access tags via facade', function () {
-    expect(Pocket::tags())->toBeInstanceOf(\PocketLabs\Pocket\Resources\TagsResource::class);
+    expect(Pocket::tags())->toBeInstanceOf(\Yannelli\Pocket\Resources\TagsResource::class);
 });

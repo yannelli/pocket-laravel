@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket\Exceptions;
+namespace Yannelli\Pocket\Exceptions;
 
 class RateLimitException extends PocketException
 {

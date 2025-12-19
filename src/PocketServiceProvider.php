@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket;
+namespace Yannelli\Pocket;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;

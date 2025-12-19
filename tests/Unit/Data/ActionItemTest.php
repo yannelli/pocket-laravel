@@ -1,8 +1,8 @@
 <?php
 
-use PocketLabs\Pocket\Data\ActionItem;
-use PocketLabs\Pocket\Enums\ActionItemPriority;
-use PocketLabs\Pocket\Enums\ActionItemStatus;
+use Yannelli\Pocket\Data\ActionItem;
+use Yannelli\Pocket\Enums\ActionItemPriority;
+use Yannelli\Pocket\Enums\ActionItemStatus;
 
 it('can create an action item from array', function () {
     $actionItem = ActionItem::fromArray([

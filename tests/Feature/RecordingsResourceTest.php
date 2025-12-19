@@ -4,11 +4,11 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use PocketLabs\Pocket\Data\PaginatedRecordings;
-use PocketLabs\Pocket\Data\Recording;
-use PocketLabs\Pocket\Enums\RecordingState;
-use PocketLabs\Pocket\PocketClient;
-use PocketLabs\Pocket\Resources\RecordingsResource;
+use Yannelli\Pocket\Data\PaginatedRecordings;
+use Yannelli\Pocket\Data\Recording;
+use Yannelli\Pocket\Enums\RecordingState;
+use Yannelli\Pocket\PocketClient;
+use Yannelli\Pocket\Resources\RecordingsResource;
 
 function createMockClient(array $responses, array &$history = []): PocketClient
 {

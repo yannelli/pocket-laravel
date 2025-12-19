@@ -4,9 +4,9 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use PocketLabs\Pocket\Data\Tag;
-use PocketLabs\Pocket\PocketClient;
-use PocketLabs\Pocket\Resources\TagsResource;
+use Yannelli\Pocket\Data\Tag;
+use Yannelli\Pocket\PocketClient;
+use Yannelli\Pocket\Resources\TagsResource;
 
 function createTagsMockClient(array $responses, array &$history = []): PocketClient
 {

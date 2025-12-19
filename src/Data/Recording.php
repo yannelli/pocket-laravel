@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket\Data;
+namespace Yannelli\Pocket\Data;
 
 use DateTimeImmutable;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
-use PocketLabs\Pocket\Enums\RecordingState;
+use Yannelli\Pocket\Enums\RecordingState;
 
 final readonly class Recording implements Arrayable, JsonSerializable
 {

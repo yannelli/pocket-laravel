@@ -1,6 +1,6 @@
 <?php
 
-use PocketLabs\Pocket\Data\Folder;
+use Yannelli\Pocket\Data\Folder;
 
 it('can create a folder from array', function () {
     $folder = Folder::fromArray([

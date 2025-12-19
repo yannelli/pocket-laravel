@@ -1,6 +1,6 @@
 <?php
 
-use PocketLabs\Pocket\Enums\RecordingState;
+use Yannelli\Pocket\Enums\RecordingState;
 
 it('has all recording states', function () {
     expect(RecordingState::cases())->toHaveCount(8);

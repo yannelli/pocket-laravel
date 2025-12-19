@@ -1,6 +1,6 @@
 <?php
 
-use PocketLabs\Pocket\Data\Pagination;
+use Yannelli\Pocket\Data\Pagination;
 
 it('can create pagination from array', function () {
     $pagination = Pagination::fromArray([

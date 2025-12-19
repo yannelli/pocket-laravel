@@ -5,14 +5,14 @@ arch('it will not use debugging functions')
     ->each->not->toBeUsed();
 
 arch('data objects are readonly')
-    ->expect('PocketLabs\Pocket\Data')
+    ->expect('Yannelli\Pocket\Data')
     ->toBeReadonly();
 
 arch('exceptions extend base exception')
-    ->expect('PocketLabs\Pocket\Exceptions')
-    ->toExtend('PocketLabs\Pocket\Exceptions\PocketException')
-    ->ignoring('PocketLabs\Pocket\Exceptions\PocketException');
+    ->expect('Yannelli\Pocket\Exceptions')
+    ->toExtend('Yannelli\Pocket\Exceptions\PocketException')
+    ->ignoring('Yannelli\Pocket\Exceptions\PocketException');
 
 arch('enums are backed by strings')
-    ->expect('PocketLabs\Pocket\Enums')
+    ->expect('Yannelli\Pocket\Enums')
     ->toBeStringBackedEnums();

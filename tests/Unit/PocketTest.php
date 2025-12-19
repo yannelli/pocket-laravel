@@ -1,10 +1,10 @@
 <?php
 
-use PocketLabs\Pocket\Pocket;
-use PocketLabs\Pocket\PocketClient;
-use PocketLabs\Pocket\Resources\FoldersResource;
-use PocketLabs\Pocket\Resources\RecordingsResource;
-use PocketLabs\Pocket\Resources\TagsResource;
+use Yannelli\Pocket\Pocket;
+use Yannelli\Pocket\PocketClient;
+use Yannelli\Pocket\Resources\FoldersResource;
+use Yannelli\Pocket\Resources\RecordingsResource;
+use Yannelli\Pocket\Resources\TagsResource;
 
 it('can create a pocket instance', function () {
     $pocket = new Pocket('pk_test_key');

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PocketLabs\Pocket;
+namespace Yannelli\Pocket;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -10,12 +10,12 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException as GuzzleServerException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
-use PocketLabs\Pocket\Exceptions\AuthenticationException;
-use PocketLabs\Pocket\Exceptions\NotFoundException;
-use PocketLabs\Pocket\Exceptions\PocketException;
-use PocketLabs\Pocket\Exceptions\RateLimitException;
-use PocketLabs\Pocket\Exceptions\ServerException;
-use PocketLabs\Pocket\Exceptions\ValidationException;
+use Yannelli\Pocket\Exceptions\AuthenticationException;
+use Yannelli\Pocket\Exceptions\NotFoundException;
+use Yannelli\Pocket\Exceptions\PocketException;
+use Yannelli\Pocket\Exceptions\RateLimitException;
+use Yannelli\Pocket\Exceptions\ServerException;
+use Yannelli\Pocket\Exceptions\ValidationException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 

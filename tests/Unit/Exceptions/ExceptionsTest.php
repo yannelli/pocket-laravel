@@ -1,11 +1,11 @@
 <?php
 
-use PocketLabs\Pocket\Exceptions\AuthenticationException;
-use PocketLabs\Pocket\Exceptions\NotFoundException;
-use PocketLabs\Pocket\Exceptions\PocketException;
-use PocketLabs\Pocket\Exceptions\RateLimitException;
-use PocketLabs\Pocket\Exceptions\ServerException;
-use PocketLabs\Pocket\Exceptions\ValidationException;
+use Yannelli\Pocket\Exceptions\AuthenticationException;
+use Yannelli\Pocket\Exceptions\NotFoundException;
+use Yannelli\Pocket\Exceptions\PocketException;
+use Yannelli\Pocket\Exceptions\RateLimitException;
+use Yannelli\Pocket\Exceptions\ServerException;
+use Yannelli\Pocket\Exceptions\ValidationException;
 
 it('can create pocket exception with details', function () {
     $exception = new PocketException('Error message', 400, ['field' => 'Invalid']);

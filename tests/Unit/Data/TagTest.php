@@ -1,6 +1,6 @@
 <?php
 
-use PocketLabs\Pocket\Data\Tag;
+use Yannelli\Pocket\Data\Tag;
 
 it('can create a tag from array', function () {
     $tag = Tag::fromArray([
