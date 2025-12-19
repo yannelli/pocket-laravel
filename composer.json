@@ -1,5 +1,5 @@
 {
-    "name": "pocket-labs/pocket-laravel",
+    "name": "yannelli/pocket-laravel-sdk",
     "description": "Laravel SDK for the Pocket API - Access recordings, transcripts, summaries, and more",
     "keywords": [
         "pocket",
@@ -9,12 +9,12 @@
         "recordings",
         "transcription"
     ],
-    "homepage": "https://github.com/pocket-labs/pocket-laravel",
+    "homepage": "https://github.com/yannelli/pocket-laravel-sdk",
     "license": "MIT",
     "authors": [
         {
-            "name": "Pocket Labs",
-            "email": "support@heypocket.com",
+            "name": "Ryan Yannelli",
+            "email": "ryanyannelli@gmail.com",
             "role": "Developer"
         }
     ],
@@ -39,12 +39,12 @@
     },
     "autoload": {
         "psr-4": {
-            "PocketLabs\\Pocket\\": "src/"
+            "Yannelli\\Pocket\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PocketLabs\\Pocket\\Tests\\": "tests/"
+            "Yannelli\\Pocket\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -65,10 +65,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "PocketLabs\\Pocket\\PocketServiceProvider"
+                "Yannelli\\Pocket\\PocketServiceProvider"
             ],
             "aliases": {
-                "Pocket": "PocketLabs\\Pocket\\Facades\\Pocket"
+                "Pocket": "Yannelli\\Pocket\\Facades\\Pocket"
             }
         }
     },
