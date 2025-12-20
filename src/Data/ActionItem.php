@@ -21,6 +21,12 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
         public ?DateTimeImmutable $dueDate = null,
     ) {}
 
+    /**
+     * Create an ActionItem instance from an array.
+     *
+     * @param  array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}  $data
+     * @return self
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -34,7 +40,9 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param  array<array>  $items
+     * Create a collection of ActionItem instances from an array.
+     *
+     * @param  array<array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>  $items
      * @return array<ActionItem>
      */
     public static function collection(array $items): array
@@ -42,16 +50,31 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
         return array_map(fn (array $item) => self::fromArray($item), $items);
     }
 
+    /**
+     * Check if the action item is pending.
+     *
+     * @return bool
+     */
     public function isPending(): bool
     {
         return $this->status === ActionItemStatus::Pending;
     }
 
+    /**
+     * Check if the action item is completed.
+     *
+     * @return bool
+     */
     public function isCompleted(): bool
     {
         return $this->status === ActionItemStatus::Completed;
     }
 
+    /**
+     * Check if the action item is overdue.
+     *
+     * @return bool
+     */
     public function isOverdue(): bool
     {
         if ($this->dueDate === null || $this->isCompleted()) {
@@ -61,6 +84,11 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
         return $this->dueDate < new DateTimeImmutable('today');
     }
 
+    /**
+     * Convert to array representation.
+     *
+     * @return array{id: string, title: string, description?: string, status: string, priority: string, due_date?: string}
+     */
     public function toArray(): array
     {
         return array_filter([
@@ -73,6 +101,11 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
         ], fn ($value) => $value !== null);
     }
 
+    /**
+     * Convert to JSON-serializable array.
+     *
+     * @return array{id: string, title: string, description?: string, status: string, priority: string, due_date?: string}
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

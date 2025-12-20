@@ -15,6 +15,11 @@ enum RecordingState: string
     case Completed = 'completed';
     case Unknown = 'unknown';
 
+    /**
+     * Get the human-readable label for this state.
+     *
+     * @return string
+     */
     public function label(): string
     {
         return match ($this) {
@@ -29,6 +34,11 @@ enum RecordingState: string
         };
     }
 
+    /**
+     * Get the description of this state.
+     *
+     * @return string
+     */
     public function description(): string
     {
         return match ($this) {
@@ -43,16 +53,31 @@ enum RecordingState: string
         };
     }
 
+    /**
+     * Check if the state indicates processing is in progress.
+     *
+     * @return bool
+     */
     public function isProcessing(): bool
     {
         return in_array($this, [self::Pending, self::Transcribing, self::Summarizing]);
     }
 
+    /**
+     * Check if the state indicates a failure.
+     *
+     * @return bool
+     */
     public function isFailed(): bool
     {
         return in_array($this, [self::Failed, self::SummarizationFailed]);
     }
 
+    /**
+     * Check if the state indicates completion.
+     *
+     * @return bool
+     */
     public function isCompleted(): bool
     {
         return $this === self::Completed;

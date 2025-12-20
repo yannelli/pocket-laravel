@@ -30,6 +30,12 @@ final readonly class Recording implements Arrayable, JsonSerializable
         public array $actionItems = [],
     ) {}
 
+    /**
+     * Create a Recording instance from an array.
+     *
+     * @param  array{id: string, title: string, folder_id?: string|null, duration: int|string, state?: string, language?: string|null, created_at: string, updated_at: string, tags?: array<array{id: string, name: string, color: string, usage_count?: int|null}>, transcript?: array{text: string, segments?: array<array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>}, summary?: array{title: string, sections?: array<array{heading: string, content: string}>}, action_items?: array<array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>}  $data
+     * @return self
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -49,7 +55,9 @@ final readonly class Recording implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param  array<array>  $items
+     * Create a collection of Recording instances from an array.
+     *
+     * @param  array<array{id: string, title: string, folder_id?: string|null, duration: int|string, state?: string, language?: string|null, created_at: string, updated_at: string, tags?: array<array{id: string, name: string, color: string, usage_count?: int|null}>, transcript?: array{text: string, segments?: array<array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>}, summary?: array{title: string, sections?: array<array{heading: string, content: string}>}, action_items?: array<array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>}>  $items
      * @return array<Recording>
      */
     public static function collection(array $items): array
@@ -59,6 +67,8 @@ final readonly class Recording implements Arrayable, JsonSerializable
 
     /**
      * Get the duration in a human-readable format.
+     *
+     * @return string
      */
     public function formattedDuration(): string
     {
@@ -73,31 +83,61 @@ final readonly class Recording implements Arrayable, JsonSerializable
         return sprintf('%d:%02d', $minutes, $seconds);
     }
 
+    /**
+     * Check if the recording is currently processing.
+     *
+     * @return bool
+     */
     public function isProcessing(): bool
     {
         return $this->state->isProcessing();
     }
 
+    /**
+     * Check if the recording processing is completed.
+     *
+     * @return bool
+     */
     public function isCompleted(): bool
     {
         return $this->state->isCompleted();
     }
 
+    /**
+     * Check if the recording processing failed.
+     *
+     * @return bool
+     */
     public function isFailed(): bool
     {
         return $this->state->isFailed();
     }
 
+    /**
+     * Check if the recording has a transcript.
+     *
+     * @return bool
+     */
     public function hasTranscript(): bool
     {
         return $this->transcript !== null;
     }
 
+    /**
+     * Check if the recording has a summary.
+     *
+     * @return bool
+     */
     public function hasSummary(): bool
     {
         return $this->summary !== null;
     }
 
+    /**
+     * Check if the recording has action items.
+     *
+     * @return bool
+     */
     public function hasActionItems(): bool
     {
         return count($this->actionItems) > 0;
@@ -123,6 +163,11 @@ final readonly class Recording implements Arrayable, JsonSerializable
         return array_filter($this->actionItems, fn (ActionItem $item) => $item->isCompleted());
     }
 
+    /**
+     * Convert the recording to an array.
+     *
+     * @return array{id: string, title: string, folder_id: string|null, duration: int, state: string, language: string|null, created_at: string, updated_at: string, tags: array<array{id: string, name: string, color: string, usage_count?: int}>, transcript?: array{text: string, segments: array<array{start: float, end: float, text: string, speaker?: string}>}, summary?: array{title: string, sections: array<array{heading: string, content: string}>}, action_items?: array<array{id: string, title: string, description?: string, status: string, priority: string, due_date?: string}>}
+     */
     public function toArray(): array
     {
         $data = [
@@ -152,6 +197,11 @@ final readonly class Recording implements Arrayable, JsonSerializable
         return $data;
     }
 
+    /**
+     * Convert the recording to JSON-serializable array.
+     *
+     * @return array{id: string, title: string, folder_id: string|null, duration: int, state: string, language: string|null, created_at: string, updated_at: string, tags: array<array{id: string, name: string, color: string, usage_count?: int}>, transcript?: array{text: string, segments: array<array{start: float, end: float, text: string, speaker?: string}>}, summary?: array{title: string, sections: array<array{heading: string, content: string}>}, action_items?: array<array{id: string, title: string, description?: string, status: string, priority: string, due_date?: string}>}
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

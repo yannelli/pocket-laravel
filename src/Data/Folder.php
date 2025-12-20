@@ -18,6 +18,12 @@ final readonly class Folder implements Arrayable, JsonSerializable
         public DateTimeImmutable $updatedAt,
     ) {}
 
+    /**
+     * Create a Folder instance from an array.
+     *
+     * @param  array{id: string, name: string, is_default: bool, created_at: string, updated_at: string}  $data
+     * @return self
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -30,7 +36,9 @@ final readonly class Folder implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param  array<array>  $items
+     * Create a collection of Folder instances from an array.
+     *
+     * @param  array<array{id: string, name: string, is_default: bool, created_at: string, updated_at: string}>  $items
      * @return array<Folder>
      */
     public static function collection(array $items): array
@@ -38,6 +46,11 @@ final readonly class Folder implements Arrayable, JsonSerializable
         return array_map(fn (array $item) => self::fromArray($item), $items);
     }
 
+    /**
+     * Convert to array representation.
+     *
+     * @return array{id: string, name: string, is_default: bool, created_at: string, updated_at: string}
+     */
     public function toArray(): array
     {
         return [
@@ -49,6 +62,11 @@ final readonly class Folder implements Arrayable, JsonSerializable
         ];
     }
 
+    /**
+     * Convert to JSON-serializable array.
+     *
+     * @return array{id: string, name: string, is_default: bool, created_at: string, updated_at: string}
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

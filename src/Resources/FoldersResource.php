@@ -10,6 +10,11 @@ use Yannelli\Pocket\PocketClient;
 
 class FoldersResource
 {
+    /**
+     * Create a new FoldersResource instance.
+     *
+     * @param  PocketClient  $client
+     */
     public function __construct(
         protected PocketClient $client
     ) {}
@@ -43,6 +48,9 @@ class FoldersResource
     /**
      * Find a folder by ID.
      *
+     * @param  string  $id  Folder ID
+     * @return Folder|null
+     *
      * @throws PocketException
      */
     public function find(string $id): ?Folder
@@ -61,6 +69,9 @@ class FoldersResource
     /**
      * Find a folder by name.
      *
+     * @param  string  $name  Folder name
+     * @return Folder|null
+     *
      * @throws PocketException
      */
     public function findByName(string $name): ?Folder
@@ -78,6 +89,8 @@ class FoldersResource
 
     /**
      * Get the default folder.
+     *
+     * @return Folder|null
      *
      * @throws PocketException
      */

@@ -12,10 +12,16 @@ final readonly class Tag implements Arrayable, JsonSerializable
     public function __construct(
         public string $id,
         public string $name,
-        public string $color,
+        public ?string $color,
         public ?int $usageCount = null,
     ) {}
 
+    /**
+     * Create a Tag instance from an array.
+     *
+     * @param  array{id: string, name: string, color?: string, usage_count?: int|null}  $data
+     * @return self
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -27,7 +33,9 @@ final readonly class Tag implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param  array<array>  $items
+     * Create a collection of Tag instances from an array.
+     *
+     * @param  array<array{id: string, name: string, color?: string, usage_count?: int|null}>  $items
      * @return array<Tag>
      */
     public static function collection(array $items): array
@@ -35,6 +43,11 @@ final readonly class Tag implements Arrayable, JsonSerializable
         return array_map(fn (array $item) => self::fromArray($item), $items);
     }
 
+    /**
+     * Convert to array representation.
+     *
+     * @return array{id: string, name: string, color: string, usage_count?: int}
+     */
     public function toArray(): array
     {
         return array_filter([
@@ -45,6 +58,11 @@ final readonly class Tag implements Arrayable, JsonSerializable
         ], fn ($value) => $value !== null);
     }
 
+    /**
+     * Convert to JSON-serializable array.
+     *
+     * @return array{id: string, name: string, color: string, usage_count?: int}
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

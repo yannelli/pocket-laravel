@@ -4,7 +4,7 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/yannelli/pocket-laravel-sdk/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/yannelli/pocket-laravel-sdk/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/yannelli/pocket-laravel-sdk.svg?style=flat-square)](https://packagist.org/packages/yannelli/pocket-laravel-sdk)
 
-The official Laravel SDK for the [Pocket API](https://app.heypocket.com). Access your recordings, transcripts, summaries, and action items with a clean, fluent interface.
+This is an unofficial Laravel SDK for the [Pocket API](https://app.heypocket.com). Access your recordings, transcripts, summaries, and action items with a clean, fluent interface.
 
 ## Installation
 
@@ -327,7 +327,6 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## Credits
 
 - [Ryan Yannelli](https://github.com/yannelli)
-- [All Contributors](../../contributors)
 
 ## License
 

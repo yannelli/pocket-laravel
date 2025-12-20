@@ -11,6 +11,11 @@ enum ActionItemStatus: string
     case Completed = 'completed';
     case Cancelled = 'cancelled';
 
+    /**
+     * Get the human-readable label for this status.
+     *
+     * @return string
+     */
     public function label(): string
     {
         return match ($this) {

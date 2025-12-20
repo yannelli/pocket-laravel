@@ -17,6 +17,12 @@ final readonly class Summary implements Arrayable, JsonSerializable
         public array $sections = [],
     ) {}
 
+    /**
+     * Create a Summary instance from an array.
+     *
+     * @param  array{title: string, sections?: array<array{heading: string, content: string}>}  $data
+     * @return self
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -29,6 +35,9 @@ final readonly class Summary implements Arrayable, JsonSerializable
 
     /**
      * Find a section by heading.
+     *
+     * @param  string  $heading  The heading to search for
+     * @return SummarySection|null
      */
     public function findSection(string $heading): ?SummarySection
     {
@@ -41,6 +50,11 @@ final readonly class Summary implements Arrayable, JsonSerializable
         return null;
     }
 
+    /**
+     * Convert to array representation.
+     *
+     * @return array{title: string, sections: array<array{heading: string, content: string}>}
+     */
     public function toArray(): array
     {
         return [
@@ -49,6 +63,11 @@ final readonly class Summary implements Arrayable, JsonSerializable
         ];
     }
 
+    /**
+     * Convert to JSON-serializable array.
+     *
+     * @return array{title: string, sections: array<array{heading: string, content: string}>}
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

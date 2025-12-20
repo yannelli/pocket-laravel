@@ -14,6 +14,12 @@ final readonly class SummarySection implements Arrayable, JsonSerializable
         public string $content,
     ) {}
 
+    /**
+     * Create a SummarySection instance from an array.
+     *
+     * @param  array{heading: string, content: string}  $data
+     * @return self
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -23,7 +29,9 @@ final readonly class SummarySection implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param  array<array>  $items
+     * Create a collection of SummarySection instances from an array.
+     *
+     * @param  array<array{heading: string, content: string}>  $items
      * @return array<SummarySection>
      */
     public static function collection(array $items): array
@@ -31,6 +39,11 @@ final readonly class SummarySection implements Arrayable, JsonSerializable
         return array_map(fn (array $item) => self::fromArray($item), $items);
     }
 
+    /**
+     * Convert to array representation.
+     *
+     * @return array{heading: string, content: string}
+     */
     public function toArray(): array
     {
         return [
@@ -39,6 +52,11 @@ final readonly class SummarySection implements Arrayable, JsonSerializable
         ];
     }
 
+    /**
+     * Convert to JSON-serializable array.
+     *
+     * @return array{heading: string, content: string}
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

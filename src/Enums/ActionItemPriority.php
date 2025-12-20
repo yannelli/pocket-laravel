@@ -11,6 +11,11 @@ enum ActionItemPriority: string
     case High = 'high';
     case Urgent = 'urgent';
 
+    /**
+     * Get the human-readable label for this priority.
+     *
+     * @return string
+     */
     public function label(): string
     {
         return match ($this) {

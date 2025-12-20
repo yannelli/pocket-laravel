@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace Yannelli\Pocket;
 
+use Illuminate\Contracts\Foundation\Application;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class PocketServiceProvider extends PackageServiceProvider
 {
+    /**
+     * Configure the package.
+     *
+     * @param  Package  $package
+     * @return void
+     */
     public function configurePackage(Package $package): void
     {
         $package
@@ -16,9 +23,15 @@ class PocketServiceProvider extends PackageServiceProvider
             ->hasConfigFile();
     }
 
+    /**
+     * Register the Pocket singleton and alias.
+     *
+     * @return void
+     */
     public function packageRegistered(): void
     {
-        $this->app->singleton(Pocket::class, function ($app) {
+        $this->app->singleton(Pocket::class, function (Application $app): Pocket {
+            /** @var array{api_key?: string, base_url?: string, api_version?: string, timeout?: int, retry?: array{times?: int, sleep?: int}} $config */
             $config = $app['config']->get('pocket', []);
 
             if (empty($config['api_key'])) {
