@@ -6,21 +6,30 @@
 
 This is an unofficial Laravel SDK for the [Pocket API](https://production.heypocketai.com). Access your recordings, transcripts, summaries, and action items with a clean, fluent interface.
 
+## Requirements
+
+- PHP 8.2 or higher
+- Laravel 12.x
+
 ## Installation
 
-You can install the package via composer:
+Install the package via Composer:
 
 ```bash
 composer require yannelli/pocket-laravel-sdk
 ```
 
-You can publish the config file with:
+The package will automatically register its service provider.
+
+### Configuration
+
+Publish the configuration file:
 
 ```bash
 php artisan vendor:publish --tag="pocket-config"
 ```
 
-This is the contents of the published config file:
+This publishes `config/pocket.php`:
 
 ```php
 return [
