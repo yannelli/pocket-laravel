@@ -30,7 +30,7 @@ class Pocket
      */
     public function __construct(
         string $apiKey,
-        string $baseUrl = 'https://app.heypocket.com',
+        string $baseUrl = 'https://production.heypocketai.com',
         string $apiVersion = 'v1',
         int $timeout = 30,
         int $retryTimes = 3,
