@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yannelli\Pocket\Exceptions;
 
 use Exception;
+use Throwable;
 
 class PocketException extends Exception
 {
@@ -19,13 +20,13 @@ class PocketException extends Exception
      * @param  string  $message  The exception message
      * @param  int  $code  The exception code (usually HTTP status code)
      * @param  array<string, mixed>  $details  Additional error details
-     * @param  Exception|null  $previous  The previous exception
+     * @param  Throwable|null  $previous  The previous exception
      */
     public function __construct(
         string $message = '',
         int $code = 0,
         array $details = [],
-        ?Exception $previous = null
+        ?Throwable $previous = null
     ) {
         parent::__construct($message, $code, $previous);
         $this->details = $details;
