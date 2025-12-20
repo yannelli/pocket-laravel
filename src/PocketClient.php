@@ -29,9 +29,20 @@ class PocketClient
 
     protected string $apiVersion;
 
+    /**
+     * Create a new PocketClient instance.
+     *
+     * @param  string  $apiKey  The Pocket API key
+     * @param  string  $baseUrl  The base URL for the Pocket API
+     * @param  string  $apiVersion  The API version to use
+     * @param  int  $timeout  Request timeout in seconds
+     * @param  int  $retryTimes  Number of times to retry failed requests
+     * @param  int  $retrySleep  Base sleep time in milliseconds between retries
+     * @param  HandlerStack|null  $handler  Optional custom Guzzle handler stack
+     */
     public function __construct(
         string $apiKey,
-        string $baseUrl = 'https://app.heypocket.com',
+        string $baseUrl = 'https://production.heypocketai.com',
         string $apiVersion = 'v1',
         int $timeout = 30,
         int $retryTimes = 3,
@@ -60,6 +71,12 @@ class PocketClient
         ]);
     }
 
+    /**
+     * Create a retry middleware for handling transient failures.
+     *
+     * @param  int  $maxRetries  Maximum number of retry attempts
+     * @param  int  $delay  Base delay in milliseconds between retries
+     */
     protected function retryMiddleware(int $maxRetries, int $delay): callable
     {
         return Middleware::retry(
@@ -95,6 +112,8 @@ class PocketClient
 
     /**
      * Build the full API URL for an endpoint.
+     *
+     * @param  string  $endpoint  The API endpoint path
      */
     protected function buildUrl(string $endpoint): string
     {
@@ -103,6 +122,10 @@ class PocketClient
 
     /**
      * Make a GET request to the API.
+     *
+     * @param  string  $endpoint  The API endpoint to request
+     * @param  array<string, mixed>  $query  Query parameters to include
+     * @return array<string, mixed>
      *
      * @throws PocketException
      */
@@ -113,6 +136,11 @@ class PocketClient
 
     /**
      * Make a request to the API.
+     *
+     * @param  string  $method  The HTTP method (GET, POST, etc.)
+     * @param  string  $endpoint  The API endpoint to request
+     * @param  array<string, mixed>  $options  Guzzle request options
+     * @return array<string, mixed>
      *
      * @throws PocketException
      */
@@ -134,6 +162,9 @@ class PocketClient
     /**
      * Parse the response body.
      *
+     * @param  ResponseInterface  $response  The HTTP response to parse
+     * @return array<string, mixed>
+     *
      * @throws PocketException
      */
     protected function parseResponse(ResponseInterface $response): array
@@ -154,6 +185,8 @@ class PocketClient
 
     /**
      * Handle client exceptions (4xx errors).
+     *
+     * @param  ClientException  $e  The client exception to handle
      *
      * @throws PocketException
      */

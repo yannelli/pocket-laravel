@@ -4,7 +4,7 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/yannelli/pocket-laravel-sdk/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/yannelli/pocket-laravel-sdk/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/yannelli/pocket-laravel-sdk.svg?style=flat-square)](https://packagist.org/packages/yannelli/pocket-laravel-sdk)
 
-This is an unofficial Laravel SDK for the [Pocket API](https://app.heypocket.com). Access your recordings, transcripts, summaries, and action items with a clean, fluent interface.
+This is an unofficial Laravel SDK for the [Pocket API](https://production.heypocketai.com). Access your recordings, transcripts, summaries, and action items with a clean, fluent interface.
 
 ## Installation
 
@@ -25,7 +25,7 @@ This is the contents of the published config file:
 ```php
 return [
     'api_key' => env('POCKET_API_KEY'),
-    'base_url' => env('POCKET_BASE_URL', 'https://app.heypocket.com'),
+    'base_url' => env('POCKET_BASE_URL', 'https://production.heypocketai.com'),
     'api_version' => env('POCKET_API_VERSION', 'v1'),
     'timeout' => env('POCKET_TIMEOUT', 30),
     'retry' => [
@@ -300,7 +300,7 @@ try {
 | Option | Environment Variable | Default | Description |
 |--------|---------------------|---------|-------------|
 | `api_key` | `POCKET_API_KEY` | - | Your Pocket API key |
-| `base_url` | `POCKET_BASE_URL` | `https://app.heypocket.com` | API base URL |
+| `base_url` | `POCKET_BASE_URL` | `https://production.heypocketai.com` | API base URL |
 | `api_version` | `POCKET_API_VERSION` | `v1` | API version |
 | `timeout` | `POCKET_TIMEOUT` | `30` | Request timeout in seconds |
 | `retry.times` | `POCKET_RETRY_TIMES` | `3` | Number of retry attempts |

@@ -18,6 +18,16 @@ class Pocket
 
     protected ?TagsResource $tags = null;
 
+    /**
+     * Create a new Pocket SDK instance.
+     *
+     * @param  string  $apiKey  The Pocket API key
+     * @param  string  $baseUrl  The base URL for the Pocket API
+     * @param  string  $apiVersion  The API version to use
+     * @param  int  $timeout  Request timeout in seconds
+     * @param  int  $retryTimes  Number of times to retry failed requests
+     * @param  int  $retrySleep  Base sleep time in milliseconds between retries
+     */
     public function __construct(
         string $apiKey,
         string $baseUrl = 'https://app.heypocket.com',
@@ -38,12 +48,15 @@ class Pocket
 
     /**
      * Create a new Pocket instance from config.
+     *
+     * @param  array{api_key?: string, base_url?: string, api_version?: string, timeout?: int, retry?: array{times?: int, sleep?: int}}  $config
+     * @return self
      */
     public static function fromConfig(array $config): self
     {
         return new self(
             apiKey: $config['api_key'] ?? '',
-            baseUrl: $config['base_url'] ?? 'https://app.heypocket.com',
+            baseUrl: $config['base_url'] ?? 'https://production.heypocketai.com',
             apiVersion: $config['api_version'] ?? 'v1',
             timeout: $config['timeout'] ?? 30,
             retryTimes: $config['retry']['times'] ?? 3,
