@@ -1,8 +1,6 @@
 # Pocket Laravel SDK
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/yannelli/pocket-laravel-sdk.svg?style=flat-square)](https://packagist.org/packages/yannelli/pocket-laravel-sdk)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/yannelli/pocket-laravel-sdk/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/yannelli/pocket-laravel-sdk/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/yannelli/pocket-laravel-sdk.svg?style=flat-square)](https://packagist.org/packages/yannelli/pocket-laravel-sdk)
+[![run-tests](https://github.com/yannelli/pocket-laravel-sdk/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/yannelli/pocket-laravel-sdk/actions/workflows/run-tests.yml)
 
 This is an unofficial Laravel SDK for the [Pocket API](https://production.heypocketai.com). Access your recordings, transcripts, summaries, and action items with a clean, fluent interface.
 
