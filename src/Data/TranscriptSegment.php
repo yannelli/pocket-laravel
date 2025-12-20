@@ -20,7 +20,6 @@ final readonly class TranscriptSegment implements Arrayable, JsonSerializable
      * Create a TranscriptSegment instance from an array.
      *
      * @param  array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {
@@ -45,8 +44,6 @@ final readonly class TranscriptSegment implements Arrayable, JsonSerializable
 
     /**
      * Get the duration of this segment in seconds.
-     *
-     * @return float
      */
     public function duration(): float
     {

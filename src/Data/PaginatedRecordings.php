@@ -28,7 +28,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
      * Create a PaginatedRecordings instance from an API response array.
      *
      * @param  array{data: array<array{id: string, title: string, folder_id?: string|null, duration: int|string, state?: string, language?: string|null, created_at: string, updated_at: string, tags?: array<array{id: string, name: string, color: string, usage_count?: int|null}>}>, pagination: array{page: int|string, limit: int|string, total: int|string, total_pages: int|string, has_more: bool}}  $response
-     * @return self
      */
     public static function fromArray(array $response): self
     {
@@ -48,8 +47,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Get the first recording in the collection.
-     *
-     * @return Recording|null
      */
     public function first(): ?Recording
     {
@@ -58,8 +55,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Get the last recording in the collection.
-     *
-     * @return Recording|null
      */
     public function last(): ?Recording
     {
@@ -70,8 +65,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Check if the collection is empty.
-     *
-     * @return bool
      */
     public function isEmpty(): bool
     {
@@ -80,8 +73,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Check if the collection is not empty.
-     *
-     * @return bool
      */
     public function isNotEmpty(): bool
     {
@@ -90,8 +81,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Get the count of recordings in this page.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -100,8 +89,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Get the total number of recordings across all pages.
-     *
-     * @return int
      */
     public function total(): int
     {
@@ -110,8 +97,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Check if there are more pages available.
-     *
-     * @return bool
      */
     public function hasMore(): bool
     {
@@ -120,8 +105,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Get the current page number.
-     *
-     * @return int
      */
     public function currentPage(): int
     {
@@ -130,8 +113,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Get the next page number, or null if on the last page.
-     *
-     * @return int|null
      */
     public function nextPage(): ?int
     {
@@ -140,8 +121,6 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
 
     /**
      * Get the previous page number, or null if on the first page.
-     *
-     * @return int|null
      */
     public function previousPage(): ?int
     {

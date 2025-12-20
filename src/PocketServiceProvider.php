@@ -12,9 +12,6 @@ class PocketServiceProvider extends PackageServiceProvider
 {
     /**
      * Configure the package.
-     *
-     * @param  Package  $package
-     * @return void
      */
     public function configurePackage(Package $package): void
     {
@@ -25,8 +22,6 @@ class PocketServiceProvider extends PackageServiceProvider
 
     /**
      * Register the Pocket singleton and alias.
-     *
-     * @return void
      */
     public function packageRegistered(): void
     {

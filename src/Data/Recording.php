@@ -34,7 +34,6 @@ final readonly class Recording implements Arrayable, JsonSerializable
      * Create a Recording instance from an array.
      *
      * @param  array{id: string, title: string, folder_id?: string|null, duration: int|string, state?: string, language?: string|null, created_at: string, updated_at: string, tags?: array<array{id: string, name: string, color: string, usage_count?: int|null}>, transcript?: array{text: string, segments?: array<array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>}, summary?: array{title: string, sections?: array<array{heading: string, content: string}>}, action_items?: array<array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>}  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {
@@ -67,8 +66,6 @@ final readonly class Recording implements Arrayable, JsonSerializable
 
     /**
      * Get the duration in a human-readable format.
-     *
-     * @return string
      */
     public function formattedDuration(): string
     {
@@ -85,8 +82,6 @@ final readonly class Recording implements Arrayable, JsonSerializable
 
     /**
      * Check if the recording is currently processing.
-     *
-     * @return bool
      */
     public function isProcessing(): bool
     {
@@ -95,8 +90,6 @@ final readonly class Recording implements Arrayable, JsonSerializable
 
     /**
      * Check if the recording processing is completed.
-     *
-     * @return bool
      */
     public function isCompleted(): bool
     {
@@ -105,8 +98,6 @@ final readonly class Recording implements Arrayable, JsonSerializable
 
     /**
      * Check if the recording processing failed.
-     *
-     * @return bool
      */
     public function isFailed(): bool
     {
@@ -115,8 +106,6 @@ final readonly class Recording implements Arrayable, JsonSerializable
 
     /**
      * Check if the recording has a transcript.
-     *
-     * @return bool
      */
     public function hasTranscript(): bool
     {
@@ -125,8 +114,6 @@ final readonly class Recording implements Arrayable, JsonSerializable
 
     /**
      * Check if the recording has a summary.
-     *
-     * @return bool
      */
     public function hasSummary(): bool
     {
@@ -135,8 +122,6 @@ final readonly class Recording implements Arrayable, JsonSerializable
 
     /**
      * Check if the recording has action items.
-     *
-     * @return bool
      */
     public function hasActionItems(): bool
     {

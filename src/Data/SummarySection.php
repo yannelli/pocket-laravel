@@ -18,7 +18,6 @@ final readonly class SummarySection implements Arrayable, JsonSerializable
      * Create a SummarySection instance from an array.
      *
      * @param  array{heading: string, content: string}  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {

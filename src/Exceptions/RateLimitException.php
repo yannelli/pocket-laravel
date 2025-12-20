@@ -6,9 +6,6 @@ namespace Yannelli\Pocket\Exceptions;
 
 class RateLimitException extends PocketException
 {
-    /**
-     * @var int|null
-     */
     protected ?int $retryAfter;
 
     /**
@@ -25,8 +22,6 @@ class RateLimitException extends PocketException
 
     /**
      * Get the number of seconds to wait before retrying.
-     *
-     * @return int|null
      */
     public function getRetryAfter(): ?int
     {

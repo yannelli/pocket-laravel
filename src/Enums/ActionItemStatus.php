@@ -13,8 +13,6 @@ enum ActionItemStatus: string
 
     /**
      * Get the human-readable label for this status.
-     *
-     * @return string
      */
     public function label(): string
     {

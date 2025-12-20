@@ -21,7 +21,6 @@ final readonly class Summary implements Arrayable, JsonSerializable
      * Create a Summary instance from an array.
      *
      * @param  array{title: string, sections?: array<array{heading: string, content: string}>}  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {
@@ -37,7 +36,6 @@ final readonly class Summary implements Arrayable, JsonSerializable
      * Find a section by heading.
      *
      * @param  string  $heading  The heading to search for
-     * @return SummarySection|null
      */
     public function findSection(string $heading): ?SummarySection
     {

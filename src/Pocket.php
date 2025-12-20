@@ -50,7 +50,6 @@ class Pocket
      * Create a new Pocket instance from config.
      *
      * @param  array{api_key?: string, base_url?: string, api_version?: string, timeout?: int, retry?: array{times?: int, sleep?: int}}  $config
-     * @return self
      */
     public static function fromConfig(array $config): self
     {

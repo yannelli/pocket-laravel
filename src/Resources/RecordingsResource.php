@@ -14,8 +14,6 @@ class RecordingsResource
 {
     /**
      * Create a new RecordingsResource instance.
-     *
-     * @param  PocketClient  $client
      */
     public function __construct(
         protected PocketClient $client
@@ -30,7 +28,6 @@ class RecordingsResource
      * @param  array<string>  $tagIds  Filter by tag IDs
      * @param  int  $page  Page number
      * @param  int  $limit  Items per page (max 100)
-     * @return PaginatedRecordings
      *
      * @throws PocketException
      */
@@ -63,7 +60,6 @@ class RecordingsResource
      * @param  bool  $includeTranscript  Include transcript data
      * @param  bool  $includeSummary  Include summary data
      * @param  bool  $includeActionItems  Include action items
-     * @return Recording
      *
      * @throws PocketException
      */
@@ -88,7 +84,6 @@ class RecordingsResource
      * Find a recording by ID (alias for get).
      *
      * @param  string  $id  Recording ID
-     * @return Recording
      *
      * @throws PocketException
      */
@@ -139,7 +134,6 @@ class RecordingsResource
      * @param  string  $folderId  Folder ID to filter by
      * @param  int  $page  Page number
      * @param  int  $limit  Items per page
-     * @return PaginatedRecordings
      *
      * @throws PocketException
      */
@@ -154,7 +148,6 @@ class RecordingsResource
      * @param  array<string>  $tagIds  Tag IDs to filter by
      * @param  int  $page  Page number
      * @param  int  $limit  Items per page
-     * @return PaginatedRecordings
      *
      * @throws PocketException
      */
@@ -170,7 +163,6 @@ class RecordingsResource
      * @param  DateTimeInterface|string  $endDate  End date for the range
      * @param  int  $page  Page number
      * @param  int  $limit  Items per page
-     * @return PaginatedRecordings
      *
      * @throws PocketException
      */
@@ -187,7 +179,6 @@ class RecordingsResource
      * Format a date for the API query.
      *
      * @param  DateTimeInterface|string|null  $date  The date to format
-     * @return string|null
      */
     protected function formatDate(DateTimeInterface|string|null $date): ?string
     {

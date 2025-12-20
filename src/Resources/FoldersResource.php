@@ -12,8 +12,6 @@ class FoldersResource
 {
     /**
      * Create a new FoldersResource instance.
-     *
-     * @param  PocketClient  $client
      */
     public function __construct(
         protected PocketClient $client
@@ -49,7 +47,6 @@ class FoldersResource
      * Find a folder by ID.
      *
      * @param  string  $id  Folder ID
-     * @return Folder|null
      *
      * @throws PocketException
      */
@@ -70,7 +67,6 @@ class FoldersResource
      * Find a folder by name.
      *
      * @param  string  $name  Folder name
-     * @return Folder|null
      *
      * @throws PocketException
      */
@@ -90,7 +86,6 @@ class FoldersResource
     /**
      * Get the default folder.
      *
-     * @return Folder|null
      *
      * @throws PocketException
      */

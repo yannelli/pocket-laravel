@@ -21,7 +21,6 @@ final readonly class Transcript implements Arrayable, JsonSerializable
      * Create a Transcript instance from an array.
      *
      * @param  array{text: string, segments?: array<array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>}  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {

@@ -21,7 +21,6 @@ final readonly class Pagination implements Arrayable, JsonSerializable
      * Create a Pagination instance from an array.
      *
      * @param  array{page: int|string, limit: int|string, total: int|string, total_pages: int|string, has_more: bool}  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {
@@ -36,8 +35,6 @@ final readonly class Pagination implements Arrayable, JsonSerializable
 
     /**
      * Check if this is the first page.
-     *
-     * @return bool
      */
     public function isFirstPage(): bool
     {
@@ -46,8 +43,6 @@ final readonly class Pagination implements Arrayable, JsonSerializable
 
     /**
      * Check if this is the last page.
-     *
-     * @return bool
      */
     public function isLastPage(): bool
     {
@@ -56,8 +51,6 @@ final readonly class Pagination implements Arrayable, JsonSerializable
 
     /**
      * Get the next page number, or null if on the last page.
-     *
-     * @return int|null
      */
     public function nextPage(): ?int
     {
@@ -66,8 +59,6 @@ final readonly class Pagination implements Arrayable, JsonSerializable
 
     /**
      * Get the previous page number, or null if on the first page.
-     *
-     * @return int|null
      */
     public function previousPage(): ?int
     {

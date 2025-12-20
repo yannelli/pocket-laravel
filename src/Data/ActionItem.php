@@ -25,7 +25,6 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
      * Create an ActionItem instance from an array.
      *
      * @param  array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {
@@ -52,8 +51,6 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
 
     /**
      * Check if the action item is pending.
-     *
-     * @return bool
      */
     public function isPending(): bool
     {
@@ -62,8 +59,6 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
 
     /**
      * Check if the action item is completed.
-     *
-     * @return bool
      */
     public function isCompleted(): bool
     {
@@ -72,8 +67,6 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
 
     /**
      * Check if the action item is overdue.
-     *
-     * @return bool
      */
     public function isOverdue(): bool
     {

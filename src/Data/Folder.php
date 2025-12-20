@@ -22,7 +22,6 @@ final readonly class Folder implements Arrayable, JsonSerializable
      * Create a Folder instance from an array.
      *
      * @param  array{id: string, name: string, is_default: bool, created_at: string, updated_at: string}  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {

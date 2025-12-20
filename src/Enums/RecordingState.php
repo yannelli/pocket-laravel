@@ -17,8 +17,6 @@ enum RecordingState: string
 
     /**
      * Get the human-readable label for this state.
-     *
-     * @return string
      */
     public function label(): string
     {
@@ -36,8 +34,6 @@ enum RecordingState: string
 
     /**
      * Get the description of this state.
-     *
-     * @return string
      */
     public function description(): string
     {
@@ -55,8 +51,6 @@ enum RecordingState: string
 
     /**
      * Check if the state indicates processing is in progress.
-     *
-     * @return bool
      */
     public function isProcessing(): bool
     {
@@ -65,8 +59,6 @@ enum RecordingState: string
 
     /**
      * Check if the state indicates a failure.
-     *
-     * @return bool
      */
     public function isFailed(): bool
     {
@@ -75,8 +67,6 @@ enum RecordingState: string
 
     /**
      * Check if the state indicates completion.
-     *
-     * @return bool
      */
     public function isCompleted(): bool
     {

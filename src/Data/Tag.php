@@ -20,7 +20,6 @@ final readonly class Tag implements Arrayable, JsonSerializable
      * Create a Tag instance from an array.
      *
      * @param  array{id: string, name: string, color?: string, usage_count?: int|null}  $data
-     * @return self
      */
     public static function fromArray(array $data): self
     {

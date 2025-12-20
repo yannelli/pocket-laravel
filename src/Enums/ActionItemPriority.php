@@ -13,8 +13,6 @@ enum ActionItemPriority: string
 
     /**
      * Get the human-readable label for this priority.
-     *
-     * @return string
      */
     public function label(): string
     {

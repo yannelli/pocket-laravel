@@ -12,8 +12,6 @@ class TagsResource
 {
     /**
      * Create a new TagsResource instance.
-     *
-     * @param  PocketClient  $client
      */
     public function __construct(
         protected PocketClient $client
@@ -49,7 +47,6 @@ class TagsResource
      * Find a tag by ID.
      *
      * @param  string  $id  Tag ID
-     * @return Tag|null
      *
      * @throws PocketException
      */
@@ -70,7 +67,6 @@ class TagsResource
      * Find a tag by name.
      *
      * @param  string  $name  Tag name
-     * @return Tag|null
      *
      * @throws PocketException
      */

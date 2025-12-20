@@ -45,8 +45,6 @@ class PocketException extends Exception
      * Create a PocketException from an API response.
      *
      * @param  array{error?: string, details?: array<string, mixed>}  $response
-     * @param  int  $statusCode
-     * @return self
      */
     public static function fromResponse(array $response, int $statusCode): self
     {
