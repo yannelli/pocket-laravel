@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Yannelli\Pocket\Resources;
 
 use DateTimeInterface;
+use Exception;
+use Generator;
 use Yannelli\Pocket\Data\PaginatedRecordings;
 use Yannelli\Pocket\Data\Recording;
 use Yannelli\Pocket\Exceptions\PocketException;
@@ -30,6 +32,7 @@ class RecordingsResource
      * @param  int  $limit  Items per page (max 100)
      *
      * @throws PocketException
+     * @throws Exception
      */
     public function list(
         ?string $folderId = null,
@@ -99,7 +102,7 @@ class RecordingsResource
      * @param  DateTimeInterface|string|null  $startDate  Filter recordings from this date
      * @param  DateTimeInterface|string|null  $endDate  Filter recordings until this date
      * @param  array<string>  $tagIds  Filter by tag IDs
-     * @return \Generator<int, Recording, mixed, void>
+     * @return Generator<int, Recording, mixed, void>
      *
      * @throws PocketException
      */
@@ -108,7 +111,7 @@ class RecordingsResource
         DateTimeInterface|string|null $startDate = null,
         DateTimeInterface|string|null $endDate = null,
         array $tagIds = []
-    ): \Generator {
+    ): Generator {
         $page = 1;
         do {
             $result = $this->list(
