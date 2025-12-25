@@ -6,6 +6,7 @@ namespace Yannelli\Pocket\Data;
 
 use ArrayIterator;
 use Countable;
+use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use IteratorAggregate;
 use JsonSerializable;
@@ -28,6 +29,7 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
      * Create a PaginatedRecordings instance from an API response array.
      *
      * @param  array{data: array<array{id: string, title: string, folder_id?: string|null, duration: int|string, state?: string, language?: string|null, created_at: string, updated_at: string, tags?: array<array{id: string, name: string, color: string, usage_count?: int|null}>}>, pagination: array{page: int|string, limit: int|string, total: int|string, total_pages: int|string, has_more: bool}}  $response
+     * @throws Exception
      */
     public static function fromArray(array $response): self
     {
