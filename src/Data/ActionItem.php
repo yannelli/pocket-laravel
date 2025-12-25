@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yannelli\Pocket\Data;
 
 use DateTimeImmutable;
+use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 use Yannelli\Pocket\Enums\ActionItemPriority;
@@ -24,7 +25,10 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
     /**
      * Create an ActionItem instance from an array.
      *
-     * @param  array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}  $data
+     * @param array{id: string, title: string, description?: string|null, status?: string, priority?: string,
+     *                          due_date?: string|null} $data
+     *
+     * @throws Exception
      */
     public static function fromArray(array $data): self
     {
@@ -41,8 +45,11 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
     /**
      * Create a collection of ActionItem instances from an array.
      *
-     * @param  array<array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>  $items
+     * @param array<array{id: string, title: string, description?: string|null, status?: string, priority?: string,
+     *                                due_date?: string|null}> $items
+     *
      * @return array<ActionItem>
+     * @throws Exception
      */
     public static function collection(array $items): array
     {
