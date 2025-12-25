@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yannelli\Pocket;
 
 use Illuminate\Contracts\Foundation\Application;
+use InvalidArgumentException;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -30,7 +31,7 @@ class PocketServiceProvider extends PackageServiceProvider
             $config = $app['config']->get('pocket', []);
 
             if (empty($config['api_key'])) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     'Pocket API key is not configured. Please set POCKET_API_KEY in your .env file.'
                 );
             }
