@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yannelli\Pocket\Data;
 
 use DateTimeImmutable;
+use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 use Yannelli\Pocket\Enums\RecordingState;
@@ -12,8 +13,8 @@ use Yannelli\Pocket\Enums\RecordingState;
 final readonly class Recording implements Arrayable, JsonSerializable
 {
     /**
-     * @param  array<Tag>  $tags
-     * @param  array<ActionItem>  $actionItems
+     * @param  array<int, Tag>  $tags
+     * @param  array<int, ActionItem>  $actionItems
      */
     public function __construct(
         public string $id,
@@ -33,7 +34,22 @@ final readonly class Recording implements Arrayable, JsonSerializable
     /**
      * Create a Recording instance from an array.
      *
-     * @param  array{id: string, title: string, folder_id?: string|null, duration: int|string, state?: string, language?: string|null, created_at: string, updated_at: string, tags?: array<array{id: string, name: string, color: string, usage_count?: int|null}>, transcript?: array{text: string, segments?: array<array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>}, summary?: array{title: string, sections?: array<array{heading: string, content: string}>}, action_items?: array<array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>}  $data
+     * @param array{
+     *     id: string,
+     *     title: string,
+     *     folder_id?: string|null,
+     *     duration: int|string,
+     *     state?: string,
+     *     language?: string|null,
+     *     created_at: string,
+     *     updated_at: string,
+     *     tags?: array<int, array{id: string, name: string, color: string, usage_count?: int|null}>,
+     *     transcript?: array{text: string, segments?: array<int, array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>},
+     *     summary?: array{title: string, sections?: array<int, array{heading: string, content: string}>},
+     *     action_items?: array<int, array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>
+     * } $data
+     *
+     * @throws Exception
      */
     public static function fromArray(array $data): self
     {
@@ -56,8 +72,23 @@ final readonly class Recording implements Arrayable, JsonSerializable
     /**
      * Create a collection of Recording instances from an array.
      *
-     * @param  array<array{id: string, title: string, folder_id?: string|null, duration: int|string, state?: string, language?: string|null, created_at: string, updated_at: string, tags?: array<array{id: string, name: string, color: string, usage_count?: int|null}>, transcript?: array{text: string, segments?: array<array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>}, summary?: array{title: string, sections?: array<array{heading: string, content: string}>}, action_items?: array<array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>}>  $items
-     * @return array<Recording>
+     * @param array<int, array{
+     *     id: string,
+     *     title: string,
+     *     folder_id?: string|null,
+     *     duration: int|string,
+     *     state?: string,
+     *     language?: string|null,
+     *     created_at: string,
+     *     updated_at: string,
+     *     tags?: array<int, array{id: string, name: string, color: string, usage_count?: int|null}>,
+     *     transcript?: array{text: string, segments?: array<int, array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>},
+     *     summary?: array{title: string, sections?: array<int, array{heading: string, content: string}>},
+     *     action_items?: array<int, array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>
+     * }> $items
+     * @return array<int, Recording>
+     *
+     * @throws Exception
      */
     public static function collection(array $items): array
     {
@@ -86,14 +117,6 @@ final readonly class Recording implements Arrayable, JsonSerializable
     public function isProcessing(): bool
     {
         return $this->state->isProcessing();
-    }
-
-    /**
-     * Check if the recording processing is completed.
-     */
-    public function isCompleted(): bool
-    {
-        return $this->state->isCompleted();
     }
 
     /**
@@ -131,7 +154,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
     /**
      * Get pending action items.
      *
-     * @return array<ActionItem>
+     * @return array<int, ActionItem>
      */
     public function pendingActionItems(): array
     {
@@ -141,7 +164,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
     /**
      * Get completed action items.
      *
-     * @return array<ActionItem>
+     * @return array<int, ActionItem>
      */
     public function completedActionItems(): array
     {
@@ -149,9 +172,53 @@ final readonly class Recording implements Arrayable, JsonSerializable
     }
 
     /**
+     * Check if the recording processing is completed.
+     */
+    public function isCompleted(): bool
+    {
+        return $this->state->isCompleted();
+    }
+
+    /**
+     * Convert the recording to JSON-serializable array.
+     *
+     * @return array{
+     *     id: string,
+     *     title: string,
+     *     folder_id: string|null,
+     *     duration: int,
+     *     state: string,
+     *     language: string|null,
+     *     created_at: string,
+     *     updated_at: string,
+     *     tags: array<int, array{id: string, name: string, color: string, usage_count?: int}>,
+     *     transcript?: array{text: string, segments: array<int, array{start: float, end: float, text: string, speaker?: string}>},
+     *     summary?: array{title: string, sections: array<int, array{heading: string, content: string}>},
+     *     action_items?: array<int, array{id: string, title: string, description?: string, status: string, priority: string, due_date?: string}>
+     * }
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    /**
      * Convert the recording to an array.
      *
-     * @return array{id: string, title: string, folder_id: string|null, duration: int, state: string, language: string|null, created_at: string, updated_at: string, tags: array<array{id: string, name: string, color: string, usage_count?: int}>, transcript?: array{text: string, segments: array<array{start: float, end: float, text: string, speaker?: string}>}, summary?: array{title: string, sections: array<array{heading: string, content: string}>}, action_items?: array<array{id: string, title: string, description?: string, status: string, priority: string, due_date?: string}>}
+     * @return array{
+     *     id: string,
+     *     title: string,
+     *     folder_id: string|null,
+     *     duration: int,
+     *     state: string,
+     *     language: string|null,
+     *     created_at: string,
+     *     updated_at: string,
+     *     tags: array<int, array{id: string, name: string, color: string, usage_count?: int}>,
+     *     transcript?: array{text: string, segments: array<int, array{start: float, end: float, text: string, speaker?: string}>},
+     *     summary?: array{title: string, sections: array<int, array{heading: string, content: string}>},
+     *     action_items?: array<int, array{id: string, title: string, description?: string, status: string, priority: string, due_date?: string}>
+     * }
      */
     public function toArray(): array
     {
@@ -180,15 +247,5 @@ final readonly class Recording implements Arrayable, JsonSerializable
         }
 
         return $data;
-    }
-
-    /**
-     * Convert the recording to JSON-serializable array.
-     *
-     * @return array{id: string, title: string, folder_id: string|null, duration: int, state: string, language: string|null, created_at: string, updated_at: string, tags: array<array{id: string, name: string, color: string, usage_count?: int}>, transcript?: array{text: string, segments: array<array{start: float, end: float, text: string, speaker?: string}>}, summary?: array{title: string, sections: array<array{heading: string, content: string}>}, action_items?: array<array{id: string, title: string, description?: string, status: string, priority: string, due_date?: string}>}
-     */
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
     }
 }
