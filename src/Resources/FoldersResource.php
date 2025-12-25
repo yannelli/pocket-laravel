@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yannelli\Pocket\Resources;
 
+use Exception;
 use Yannelli\Pocket\Data\Folder;
 use Yannelli\Pocket\Exceptions\PocketException;
 use Yannelli\Pocket\PocketClient;
@@ -21,8 +22,8 @@ class FoldersResource
      * List all folders.
      *
      * @return array<Folder>
-     *
      * @throws PocketException
+     * @throws Exception
      */
     public function list(): array
     {
