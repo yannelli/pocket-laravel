@@ -65,6 +65,7 @@ class RecordingsResource
      * @param  bool  $includeActionItems  Include action items
      *
      * @throws PocketException
+     * @throws Exception
      */
     public function get(
         string $id,
