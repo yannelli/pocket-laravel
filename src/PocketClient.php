@@ -6,12 +6,14 @@ namespace Yannelli\Pocket;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException as GuzzleServerException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 use Yannelli\Pocket\Exceptions\AuthenticationException;
 use Yannelli\Pocket\Exceptions\NotFoundException;
 use Yannelli\Pocket\Exceptions\PocketException;
@@ -28,6 +30,10 @@ class PocketClient
     protected string $baseUrl;
 
     protected string $apiVersion;
+
+    protected ?HandlerStack $handler;
+
+    protected ?ResponseInterface $response = null;
 
     /**
      * Create a new PocketClient instance.
@@ -80,7 +86,7 @@ class PocketClient
     protected function retryMiddleware(int $maxRetries, int $delay): callable
     {
         return Middleware::retry(
-            function (int $retries, RequestInterface $request, ?ResponseInterface $response = null, ?\Throwable $exception = null) use ($maxRetries): bool {
+            function (int $retries, RequestInterface $request, ?ResponseInterface $response = null, ?Throwable $exception = null) use ($maxRetries): bool {
                 // Don't retry if we've exceeded max retries
                 if ($retries >= $maxRetries) {
                     return false;
@@ -97,7 +103,7 @@ class PocketClient
                 }
 
                 // Retry on connection errors
-                if ($exception instanceof \GuzzleHttp\Exception\ConnectException) {
+                if ($exception instanceof ConnectException) {
                     return true;
                 }
 
@@ -108,16 +114,6 @@ class PocketClient
                 return $delay * (int) pow(2, $retries);
             }
         );
-    }
-
-    /**
-     * Build the full API URL for an endpoint.
-     *
-     * @param  string  $endpoint  The API endpoint path
-     */
-    protected function buildUrl(string $endpoint): string
-    {
-        return "/api/{$this->apiVersion}/public".'/'.ltrim($endpoint, '/');
     }
 
     /**
@@ -147,9 +143,9 @@ class PocketClient
     protected function request(string $method, string $endpoint, array $options = []): array
     {
         try {
-            $response = $this->httpClient->request($method, $this->buildUrl($endpoint), $options);
+            $this->response = $this->httpClient->request($method, $this->buildUrl($endpoint), $options);
 
-            return $this->parseResponse($response);
+            return $this->parseResponse($this->response);
         } catch (ClientException $e) {
             $this->handleClientException($e);
         } catch (GuzzleServerException $e) {
@@ -157,6 +153,16 @@ class PocketClient
         } catch (GuzzleException $e) {
             throw new PocketException('Request failed: '.$e->getMessage(), 0, [], $e);
         }
+    }
+
+    /**
+     * Build the full API URL for an endpoint.
+     *
+     * @param  string  $endpoint  The API endpoint path
+     */
+    protected function buildUrl(string $endpoint): string
+    {
+        return "/api/{$this->apiVersion}/public".'/'.ltrim($endpoint, '/');
     }
 
     /**
@@ -235,5 +241,15 @@ class PocketClient
     public function getApiVersion(): string
     {
         return $this->apiVersion;
+    }
+
+    /**
+     * Retrieve the response instance.
+     *
+     * @return ResponseInterface|null The response instance if available, or null if no response exists.
+     */
+    public function getResponse(): ?ResponseInterface
+    {
+        return $this->response;
     }
 }
