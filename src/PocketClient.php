@@ -72,7 +72,7 @@ class PocketClient
     }
 
     /**
-     * Create a retry middleware for handling transient failures.
+     * Create retry middleware for handling transient failures.
      *
      * @param  int  $maxRetries  Maximum number of retry attempts
      * @param  int  $delay  Base delay in milliseconds between retries
