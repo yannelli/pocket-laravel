@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yannelli\Pocket\Data;
 
 use DateTimeImmutable;
+use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
@@ -22,6 +23,8 @@ final readonly class Folder implements Arrayable, JsonSerializable
      * Create a Folder instance from an array.
      *
      * @param  array{id: string, name: string, is_default: bool, created_at: string, updated_at: string}  $data
+     *
+     * @throws Exception
      */
     public static function fromArray(array $data): self
     {
@@ -39,6 +42,8 @@ final readonly class Folder implements Arrayable, JsonSerializable
      *
      * @param  array<array{id: string, name: string, is_default: bool, created_at: string, updated_at: string}>  $items
      * @return array<Folder>
+     *
+     * @throws Exception
      */
     public static function collection(array $items): array
     {
