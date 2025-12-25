@@ -33,7 +33,7 @@ class PocketClient
 
     protected ?HandlerStack $handler;
 
-    protected ?ResponseInterface $response = null;
+    protected mixed $response = null;
 
     /**
      * Create a new PocketClient instance.
@@ -143,9 +143,11 @@ class PocketClient
     protected function request(string $method, string $endpoint, array $options = []): array
     {
         try {
-            $this->response = $this->httpClient->request($method, $this->buildUrl($endpoint), $options);
+            $response = $this->httpClient->request($method, $this->buildUrl($endpoint), $options);
 
-            return $this->parseResponse($this->response);
+            $this->response = $response;
+
+            return $this->parseResponse($response);
         } catch (ClientException $e) {
             $this->handleClientException($e);
         } catch (GuzzleServerException $e) {
