@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 use Yannelli\Pocket\Enums\RecordingState;
+use Yannelli\Pocket\Resources\AudioResource;
 
 final readonly class Recording implements Arrayable, JsonSerializable
 {
@@ -53,11 +54,13 @@ final readonly class Recording implements Arrayable, JsonSerializable
      */
     public static function fromArray(array $data): self
     {
+        $duration = $data['duration'] ?? null;
+
         return new self(
             id: $data['id'],
             title: $data['title'],
             folderId: $data['folder_id'] ?? null,
-            duration: (int) $data['duration'] ?? null,
+            duration: $duration,
             state: RecordingState::tryFrom($data['state'] ?? 'unknown') ?? RecordingState::Unknown,
             language: $data['language'] ?? null,
             createdAt: new DateTimeImmutable($data['created_at']),
