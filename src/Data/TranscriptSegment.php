@@ -12,21 +12,21 @@ final readonly class TranscriptSegment implements Arrayable, JsonSerializable
     public function __construct(
         public float $start,
         public float $end,
-        public string $text,
+        public ?string $text,
         public ?string $speaker = null,
     ) {}
 
     /**
      * Create a TranscriptSegment instance from an array.
      *
-     * @param  array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}  $data
+     * @param  array{start: float|int|string, end: float|int|string, text?: string, speaker?: string|null}  $data
      */
     public static function fromArray(array $data): self
     {
         return new self(
             start: (float) $data['start'],
             end: (float) $data['end'],
-            text: $data['text'],
+            text: $data['text'] ?? '',
             speaker: $data['speaker'] ?? null,
         );
     }
