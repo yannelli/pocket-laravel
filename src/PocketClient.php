@@ -33,7 +33,9 @@ class PocketClient
 
     protected ?HandlerStack $handler;
 
-    protected mixed $response = null;
+    protected ?ResponseInterface $response = null;
+
+    protected ?RequestInterface $request = null;
 
     /**
      * Create a new PocketClient instance.
@@ -65,6 +67,8 @@ class PocketClient
             $stack->push($this->retryMiddleware($retryTimes, $retrySleep));
         }
 
+        $stack->push($this->captureRequestMiddleware());
+
         $this->httpClient = new Client([
             'base_uri' => $this->baseUrl,
             'timeout' => $timeout,
@@ -73,8 +77,22 @@ class PocketClient
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer '.$this->apiKey,
+                'User-Agent' => 'PocketClient/1.0.0',
             ],
         ]);
+    }
+
+    /**
+     * Create middleware to capture and store the outgoing HTTP request.
+     *
+     * @return callable Middleware that assigns the outgoing request to a property for later access
+     */
+    protected function captureRequestMiddleware(): callable
+    {
+        return Middleware::mapRequest(function (RequestInterface $request) {
+            $this->request = $request;
+            return $request;
+        });
     }
 
     /**
@@ -188,7 +206,11 @@ class PocketClient
             throw PocketException::fromResponse($data, $response->getStatusCode());
         }
 
-        return $data;
+        return array_merge([
+            'headers' => $response->getHeaders(),
+            'base_url' => $this->request?->getUri(),
+            'status_code' => $response->getStatusCode(),
+        ], $data);
     }
 
     /**
