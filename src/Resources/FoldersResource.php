@@ -22,6 +22,7 @@ class FoldersResource
      * List all folders.
      *
      * @return array<Folder>
+     *
      * @throws PocketException
      * @throws Exception
      */
