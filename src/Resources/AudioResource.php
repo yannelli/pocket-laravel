@@ -20,6 +20,13 @@ class AudioResource
     private ?string $recordingId = null;
 
     /**
+     * @var array<string>
+     */
+    private static array $tempFiles = [];
+
+    private static bool $shutdownRegistered = false;
+
+    /**
      * Create a new AudioResource instance.
      */
     public function __construct(
@@ -30,6 +37,38 @@ class AudioResource
         $this->httpClient = new Client([
             'timeout' => 300,
         ]);
+
+        $this->registerShutdownHandler();
+    }
+
+    /**
+     * Register the shutdown handler to clean up temp files.
+     */
+    private function registerShutdownHandler(): void
+    {
+        if (self::$shutdownRegistered) {
+            return;
+        }
+
+        register_shutdown_function(static function () {
+            self::cleanup();
+        });
+
+        self::$shutdownRegistered = true;
+    }
+
+    /**
+     * Clean up all temporary files created by download().
+     */
+    public static function cleanup(): void
+    {
+        foreach (self::$tempFiles as $path) {
+            if (file_exists($path)) {
+                @unlink($path);
+            }
+        }
+
+        self::$tempFiles = [];
     }
 
     /**
@@ -103,6 +142,9 @@ class AudioResource
     /**
      * Download the audio file and return a temporary file path.
      *
+     * Temporary files are automatically cleaned up when the script ends.
+     * Call AudioResource::cleanup() to clean up earlier if needed.
+     *
      * @param  string|null  $recordingId  The recording ID (optional if set on instance)
      * @return string The path to the temporary file
      *
@@ -117,6 +159,8 @@ class AudioResource
         $this->httpClient->get($audioUrl->signedUrl, [
             'sink' => $tempPath,
         ]);
+
+        self::$tempFiles[] = $tempPath;
 
         return $tempPath;
     }
