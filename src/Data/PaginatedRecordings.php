@@ -23,6 +23,7 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
     public function __construct(
         public array $data,
         public Pagination $pagination,
+        public mixed $response = null,
     ) {}
 
     /**
@@ -36,6 +37,7 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
         return new self(
             data: Recording::collection($response['data']),
             pagination: Pagination::fromArray($response['pagination']),
+            response: $response
         );
     }
 
