@@ -7,10 +7,12 @@ namespace Yannelli\Pocket\Data;
 use ArrayIterator;
 use Countable;
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Support\Arrayable;
 use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
+use Yannelli\Pocket\PocketClient;
 
 /**
  * @implements IteratorAggregate<int, Recording>
@@ -23,21 +25,22 @@ final readonly class PaginatedRecordings implements Arrayable, Countable, Iterat
     public function __construct(
         public array $data,
         public Pagination $pagination,
-        public mixed $response = null,
+        public mixed $client
     ) {}
 
     /**
      * Create a PaginatedRecordings instance from an API response array.
      *
-     * @param  array{data: array<array{id: string, title: string, folder_id?: string|null, duration: int|string, state?: string, language?: string|null, created_at: string, updated_at: string, tags?: array<array{id: string, name: string, color: string, usage_count?: int|null}>}>, pagination: array{page: int|string, limit: int|string, total: int|string, total_pages: int|string, has_more: bool}}  $response
+     * @param  array{data: array<array{id: string, title: string, folder_id?: string|null, duration: int|string, state?: string, language?: string|null, created_at: string, updated_at: string, tags?: array<array{id: string, name: string, color: string, usage_count?: int|null}>}>, pagination: array{page: int|string, limit: int|string, total: int|string, total_pages: int|string, has_more: bool}, client?: PocketClient }  $response
+     *
      * @throws Exception
      */
-    public static function fromArray(array $response): self
+    public static function fromArray(array $response, ?PocketClient $client = null): self
     {
         return new self(
             data: Recording::collection($response['data']),
             pagination: Pagination::fromArray($response['pagination']),
-            response: $response
+            client: $client ?? null
         );
     }
 
