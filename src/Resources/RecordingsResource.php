@@ -21,6 +21,8 @@ class RecordingsResource
         protected PocketClient $client
     ) {}
 
+    private mixed $rawResponse = null;
+
     /**
      * List recordings with optional filters.
      *
@@ -52,6 +54,8 @@ class RecordingsResource
         ];
 
         $response = $this->client->get('recordings', $query);
+
+        $this->rawResponse = $response;
 
         return PaginatedRecordings::fromArray($response);
     }
@@ -195,5 +199,10 @@ class RecordingsResource
         }
 
         return $date;
+    }
+
+    public function getRawResponse()
+    {
+        return $this->rawResponse;
     }
 }
