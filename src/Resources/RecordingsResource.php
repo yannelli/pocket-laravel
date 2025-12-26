@@ -201,7 +201,12 @@ class RecordingsResource
         return $date;
     }
 
-    public function getRawResponse()
+    /**
+     * Retrieve the raw response data.
+     *
+     * @return mixed The raw response data returned by the request.
+     */
+    public function getRawResponse(): mixed
     {
         return $this->rawResponse;
     }
