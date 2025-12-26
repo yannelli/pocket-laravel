@@ -17,28 +17,49 @@ class AudioResource
 {
     protected Client $httpClient;
 
+    private ?string $recordingId = null;
+
     /**
      * Create a new AudioResource instance.
      */
     public function __construct(
-        protected PocketClient $client
+        protected PocketClient $client,
+        ?string $recordingId = null
     ) {
+        $this->recordingId = $recordingId;
         $this->httpClient = new Client([
             'timeout' => 300,
         ]);
     }
 
     /**
+     * Get the recording ID, using the instance property if set, or the provided parameter.
+     *
+     * @throws PocketException
+     */
+    private function resolveRecordingId(?string $recordingId): string
+    {
+        $id = $recordingId ?? $this->recordingId;
+
+        if ($id === null) {
+            throw new PocketException('Recording ID is required. Either pass it to the method or set it when creating the AudioResource.');
+        }
+
+        return $id;
+    }
+
+    /**
      * Get the signed URL for a recording's audio file.
      *
-     * @param  string  $recordingId  The recording ID
+     * @param  string|null  $recordingId  The recording ID (optional if set on instance)
      *
      * @throws PocketException
      * @throws Exception
      */
-    public function getUrl(string $recordingId): AudioUrl
+    public function getUrl(?string $recordingId = null): AudioUrl
     {
-        $response = $this->client->get("recordings/{$recordingId}/audio-url");
+        $id = $this->resolveRecordingId($recordingId);
+        $response = $this->client->get("recordings/{$id}/audio-url");
 
         return AudioUrl::fromArray($response['data']);
     }
@@ -46,12 +67,12 @@ class AudioResource
     /**
      * Get the audio file contents as a string.
      *
-     * @param  string  $recordingId  The recording ID
+     * @param  string|null  $recordingId  The recording ID (optional if set on instance)
      *
      * @throws PocketException
      * @throws GuzzleException
      */
-    public function getContents(string $recordingId): string
+    public function getContents(?string $recordingId = null): string
     {
         $audioUrl = $this->getUrl($recordingId);
 
@@ -63,12 +84,12 @@ class AudioResource
     /**
      * Get a stream for the audio file.
      *
-     * @param  string  $recordingId  The recording ID
+     * @param  string|null  $recordingId  The recording ID (optional if set on instance)
      *
      * @throws PocketException
      * @throws GuzzleException
      */
-    public function stream(string $recordingId): StreamInterface
+    public function stream(?string $recordingId = null): StreamInterface
     {
         $audioUrl = $this->getUrl($recordingId);
 
@@ -82,13 +103,13 @@ class AudioResource
     /**
      * Download the audio file and return a temporary file path.
      *
-     * @param  string  $recordingId  The recording ID
+     * @param  string|null  $recordingId  The recording ID (optional if set on instance)
      * @return string The path to the temporary file
      *
      * @throws PocketException
      * @throws GuzzleException
      */
-    public function download(string $recordingId): string
+    public function download(?string $recordingId = null): string
     {
         $audioUrl = $this->getUrl($recordingId);
         $tempPath = sys_get_temp_dir().'/'.uniqid('pocket_audio_', true).'.mp3';
@@ -103,19 +124,19 @@ class AudioResource
     /**
      * Save the audio file to a Laravel filesystem disk.
      *
-     * @param  string  $recordingId  The recording ID
      * @param  string  $path  The path where the file should be saved
      * @param  string|null  $disk  The disk to use (null for default)
      * @param  array<string, mixed>  $options  Additional options for the storage
+     * @param  string|null  $recordingId  The recording ID (optional if set on instance)
      *
      * @throws PocketException
      * @throws GuzzleException
      */
     public function saveTo(
-        string $recordingId,
         string $path,
         ?string $disk = null,
-        array $options = []
+        array $options = [],
+        ?string $recordingId = null
     ): bool {
         $contents = $this->getContents($recordingId);
 
@@ -127,19 +148,19 @@ class AudioResource
     /**
      * Save the audio file using a stream (memory efficient for large files).
      *
-     * @param  string  $recordingId  The recording ID
      * @param  string  $path  The path where the file should be saved
      * @param  string|null  $disk  The disk to use (null for default)
      * @param  array<string, mixed>  $options  Additional options for the storage
+     * @param  string|null  $recordingId  The recording ID (optional if set on instance)
      *
      * @throws PocketException
      * @throws GuzzleException
      */
     public function saveStreamTo(
-        string $recordingId,
         string $path,
         ?string $disk = null,
-        array $options = []
+        array $options = [],
+        ?string $recordingId = null
     ): bool {
         $stream = $this->stream($recordingId);
 
@@ -151,13 +172,13 @@ class AudioResource
     /**
      * Save the audio file to a local path (without using Laravel's filesystem).
      *
-     * @param  string  $recordingId  The recording ID
      * @param  string  $path  The absolute path where the file should be saved
+     * @param  string|null  $recordingId  The recording ID (optional if set on instance)
      *
      * @throws PocketException
      * @throws GuzzleException
      */
-    public function saveToPath(string $recordingId, string $path): bool
+    public function saveToPath(string $path, ?string $recordingId = null): bool
     {
         $audioUrl = $this->getUrl($recordingId);
 
