@@ -47,8 +47,8 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
      *
      * @param array<array{id: string, title: string, description?: string|null, status?: string, priority?: string,
      *                                due_date?: string|null}> $items
-     *
      * @return array<ActionItem>
+     *
      * @throws Exception
      */
     public static function collection(array $items): array
