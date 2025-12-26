@@ -91,6 +91,7 @@ class PocketClient
     {
         return Middleware::mapRequest(function (RequestInterface $request) {
             $this->request = $request;
+
             return $request;
         });
     }

@@ -104,9 +104,15 @@ class Pocket
 
     /**
      * Access the audio resource.
+     *
+     * @param  string|null  $recordingId  Optional recording ID to scope the resource
      */
-    public function audio(): AudioResource
+    public function audio(?string $recordingId = null): AudioResource
     {
+        if ($recordingId !== null) {
+            return new AudioResource($this->client, $recordingId);
+        }
+
         if ($this->audio === null) {
             $this->audio = new AudioResource($this->client);
         }
