@@ -2,6 +2,7 @@
 
 use Yannelli\Pocket\Pocket;
 use Yannelli\Pocket\PocketClient;
+use Yannelli\Pocket\Resources\AudioResource;
 use Yannelli\Pocket\Resources\FoldersResource;
 use Yannelli\Pocket\Resources\RecordingsResource;
 use Yannelli\Pocket\Resources\TagsResource;
@@ -44,6 +45,12 @@ it('can access tags resource', function () {
     $pocket = new Pocket('pk_test_key');
 
     expect($pocket->tags())->toBeInstanceOf(TagsResource::class);
+});
+
+it('can access audio resource', function () {
+    $pocket = new Pocket('pk_test_key');
+
+    expect($pocket->audio())->toBeInstanceOf(AudioResource::class);
 });
 
 it('returns same resource instance on multiple calls', function () {
