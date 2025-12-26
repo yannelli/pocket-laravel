@@ -11,7 +11,7 @@ final readonly class Tag implements Arrayable, JsonSerializable
 {
     public function __construct(
         public string $id,
-        public string $name,
+        public ?string $name,
         public ?string $color,
         public ?int $usageCount = null,
     ) {}
@@ -19,14 +19,14 @@ final readonly class Tag implements Arrayable, JsonSerializable
     /**
      * Create a Tag instance from an array.
      *
-     * @param  array{id: string, name: string, color?: string, usage_count?: int|null}  $data
+     * @param  array{id: string, name?: string, color?: string, usage_count?: int|null}  $data
      */
     public static function fromArray(array $data): self
     {
         return new self(
             id: $data['id'],
-            name: $data['name'],
-            color: $data['color'],
+            name: $data['name'] ?? null,
+            color: $data['color'] ?? null,
             usageCount: $data['usage_count'] ?? null,
         );
     }
@@ -45,7 +45,7 @@ final readonly class Tag implements Arrayable, JsonSerializable
     /**
      * Convert to array representation.
      *
-     * @return array{id: string, name: string, color: string, usage_count?: int}
+     * @return array{id: string, name?: string, color?: string, usage_count?: int}
      */
     public function toArray(): array
     {
@@ -60,7 +60,7 @@ final readonly class Tag implements Arrayable, JsonSerializable
     /**
      * Convert to JSON-serializable array.
      *
-     * @return array{id: string, name: string, color: string, usage_count?: int}
+     * @return array{id: string, name?: string, color?: string, usage_count?: int}
      */
     public function jsonSerialize(): array
     {

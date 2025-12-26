@@ -15,7 +15,7 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
 {
     public function __construct(
         public string $id,
-        public string $title,
+        public ?string $title,
         public ?string $description = null,
         public ActionItemStatus $status = ActionItemStatus::Pending,
         public ActionItemPriority $priority = ActionItemPriority::Medium,
@@ -25,7 +25,7 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
     /**
      * Create an ActionItem instance from an array.
      *
-     * @param array{id: string, title: string, description?: string|null, status?: string, priority?: string,
+     * @param array{id: string, title?: string, description?: string|null, status?: string, priority?: string,
      *                          due_date?: string|null} $data
      *
      * @throws Exception

@@ -13,19 +13,19 @@ final readonly class Transcript implements Arrayable, JsonSerializable
      * @param  array<TranscriptSegment>  $segments
      */
     public function __construct(
-        public string $text,
-        public array $segments = [],
+        public ?string $text = null,
+        public ?array $segments = [],
     ) {}
 
     /**
      * Create a Transcript instance from an array.
      *
-     * @param  array{text: string, segments?: array<array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>}  $data
+     * @param  array{text: string, segments?: array<array{start: float|int|string|null, end: float|int|string|null, text?: string, speaker?: string|null}>}  $data
      */
     public static function fromArray(array $data): self
     {
         return new self(
-            text: $data['text'],
+            text: $data['text'] ?? null,
             segments: isset($data['segments'])
                 ? TranscriptSegment::collection($data['segments'])
                 : [],
@@ -65,7 +65,7 @@ final readonly class Transcript implements Arrayable, JsonSerializable
     /**
      * Convert to array representation.
      *
-     * @return array{text: string, segments: array<array{start: float, end: float, text: string, speaker?: string}>}
+     * @return array{text: string, segments: array<array{start?: float, end?: float, text: string, speaker?: string}>}
      */
     public function toArray(): array
     {
