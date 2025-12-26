@@ -4,6 +4,10 @@
 
 This is an unofficial Laravel SDK for the [Pocket API](https://production.heypocketai.com). Access your recordings, transcripts, summaries, and action items with a clean, fluent interface.
 
+## Disclaimer
+
+This is an **unofficial** SDK for the Pocket API, developed and maintained by [Ryan Yannelli](https://ryanyannelli.com). It is not affiliated with, endorsed by, or officially connected to Pocket in any way. Use at your own risk. No warranties or guarantees are provided.
+
 ## Requirements
 
 - PHP 8.2 or higher
@@ -255,6 +259,65 @@ $tag = Pocket::tags()->find('tag_123');
 $tag = Pocket::tags()->findByName('Important');
 ```
 
+## Audio
+
+Access and download audio files for recordings:
+
+```php
+use Yannelli\Pocket\Facades\Pocket;
+
+// Get a signed URL for the audio file
+$audioUrl = Pocket::audio()->getUrl('rec_123');
+echo $audioUrl->signedUrl;
+echo $audioUrl->expiresIn; // seconds until expiry
+
+// Check if the URL has expired
+if ($audioUrl->isExpired()) {
+    $audioUrl = Pocket::audio()->getUrl('rec_123');
+}
+
+// Get the audio file contents as a string
+$contents = Pocket::audio()->getContents('rec_123');
+
+// Stream the audio file (memory efficient for large files)
+$stream = Pocket::audio()->stream('rec_123');
+
+// Download to a temporary file (auto-cleaned up on script end)
+$tempPath = Pocket::audio()->download('rec_123');
+
+// Save to Laravel storage disk
+Pocket::audio()->saveTo('recordings/audio.mp3', 's3', [], 'rec_123');
+
+// Save using streaming (memory efficient)
+Pocket::audio()->saveStreamTo('recordings/audio.mp3', 'local', [], 'rec_123');
+
+// Save directly to a local path
+Pocket::audio()->saveToPath('/path/to/audio.mp3', 'rec_123');
+```
+
+### Scoped Audio Resource
+
+You can scope the audio resource to a specific recording:
+
+```php
+// Create a scoped audio resource
+$audio = Pocket::audio('rec_123');
+
+// All methods now work without passing the recording ID
+$url = $audio->getUrl();
+$contents = $audio->getContents();
+$tempPath = $audio->download();
+```
+
+### Cleanup Temporary Files
+
+```php
+use Yannelli\Pocket\Resources\AudioResource;
+
+// Manually clean up temporary files created by download()
+AudioResource::cleanup();
+```
+
 ## Data Objects
 
 All API responses are returned as strongly-typed data objects:
@@ -266,6 +329,7 @@ use Yannelli\Pocket\Data\Tag;
 use Yannelli\Pocket\Data\Transcript;
 use Yannelli\Pocket\Data\Summary;
 use Yannelli\Pocket\Data\ActionItem;
+use Yannelli\Pocket\Data\AudioUrl;
 
 // All objects implement Arrayable and JsonSerializable
 $array = $recording->toArray();
@@ -323,13 +387,6 @@ composer test
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 
