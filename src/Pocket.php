@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yannelli\Pocket;
 
+use Yannelli\Pocket\Resources\AudioResource;
 use Yannelli\Pocket\Resources\FoldersResource;
 use Yannelli\Pocket\Resources\RecordingsResource;
 use Yannelli\Pocket\Resources\TagsResource;
@@ -17,6 +18,8 @@ class Pocket
     protected ?FoldersResource $folders = null;
 
     protected ?TagsResource $tags = null;
+
+    protected ?AudioResource $audio = null;
 
     /**
      * Create a new Pocket SDK instance.
@@ -97,6 +100,18 @@ class Pocket
         }
 
         return $this->tags;
+    }
+
+    /**
+     * Access the audio resource.
+     */
+    public function audio(): AudioResource
+    {
+        if ($this->audio === null) {
+            $this->audio = new AudioResource($this->client);
+        }
+
+        return $this->audio;
     }
 
     /**
