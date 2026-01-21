@@ -26,7 +26,7 @@ composer test-coverage
 
 ## Architecture
 
-This is a Laravel SDK for the Pocket API (app.heypocket.com). It provides a fluent interface for accessing recordings, transcripts, summaries, and action items.
+This is a Laravel SDK for the Pocket API (https://public.heypocket.com). It provides a fluent interface for accessing recordings, transcripts, summaries, and action items.
 
 ### Core Components
 
