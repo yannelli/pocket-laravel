@@ -17,7 +17,7 @@ it('can create a pocket instance', function () {
 it('can create a pocket instance from config', function () {
     $pocket = Pocket::fromConfig([
         'api_key' => 'pk_test_key',
-        'base_url' => 'https://app.heypocket.com',
+        'base_url' => 'https://https://public.heypocket.com',
         'api_version' => 'v1',
         'timeout' => 30,
         'retry' => [

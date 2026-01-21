@@ -16,7 +16,7 @@ function createTagsMockClient(array $responses, array &$history = []): PocketCli
 
     return new PocketClient(
         apiKey: 'pk_test_key',
-        baseUrl: 'https://app.heypocket.com',
+        baseUrl: 'https://https://public.heypocket.com',
         apiVersion: 'v1',
         handler: $handlerStack
     );

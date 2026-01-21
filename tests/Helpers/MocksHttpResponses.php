@@ -31,7 +31,7 @@ trait MocksHttpResponses
 
         $client = new PocketClient(
             apiKey: 'pk_test_key',
-            baseUrl: 'https://app.heypocket.com',
+            baseUrl: 'https://https://public.heypocket.com',
             apiVersion: 'v1',
             timeout: 30,
             retryTimes: 0,
@@ -41,7 +41,7 @@ trait MocksHttpResponses
 
         return new Pocket(
             apiKey: 'pk_test_key',
-            baseUrl: 'https://app.heypocket.com',
+            baseUrl: 'https://https://public.heypocket.com',
             apiVersion: 'v1',
             timeout: 30,
             retryTimes: 0,
@@ -64,7 +64,7 @@ trait MocksHttpResponses
 
         return new PocketClient(
             apiKey: 'pk_test_key',
-            baseUrl: 'https://app.heypocket.com',
+            baseUrl: 'https://https://public.heypocket.com',
             apiVersion: 'v1',
             timeout: 30,
             retryTimes: 0,

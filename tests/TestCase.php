@@ -22,7 +22,7 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('pocket.api_key', 'pk_test_key');
-        config()->set('pocket.base_url', 'https://app.heypocket.com');
+        config()->set('pocket.base_url', 'https://https://public.heypocket.com');
         config()->set('pocket.api_version', 'v1');
         config()->set('pocket.timeout', 30);
         config()->set('pocket.retry.times', 3);
