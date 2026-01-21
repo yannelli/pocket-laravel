@@ -21,7 +21,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
         public string $id,
         public string $title,
         public ?string $folderId,
-        public ?int $duration,
+        public int|string|null $duration,
         public ?RecordingState $state,
         public ?string $language,
         public DateTimeImmutable $createdAt,
