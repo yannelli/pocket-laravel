@@ -7,7 +7,6 @@ namespace Yannelli\Pocket\Data;
 use ArrayIterator;
 use Countable;
 use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Contracts\Support\Arrayable;
 use IteratorAggregate;
 use JsonSerializable;
