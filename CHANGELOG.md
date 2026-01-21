@@ -10,6 +10,6 @@ All notable changes to `:package_name` will be documented in this file.
 
 ### New Contributors
 
-* @yannelli made their first contribution in https://github.com/yannelli/pocket-laravel-sdk
+* @yannelli made their first contribution in https://github.com/yannelli/pocket-laravel
 
-**Full Changelog**: https://github.com/yannelli/pocket-laravel-sdk/commits/v1.0.0
+**Full Changelog**: https://github.com/yannelli/pocket-laravel/commits/v1.0.0
