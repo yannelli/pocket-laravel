@@ -184,9 +184,7 @@ class AudioResource
     ): bool {
         $contents = $this->getContents($recordingId);
 
-        $storage = $disk ? Storage::disk($disk) : Storage::disk();
-
-        return $storage->put($path, $contents, $options);
+        return ($disk ? Storage::disk($disk) : Storage::disk())->put($path, $contents, $options);
     }
 
     /**
