@@ -1,37 +1,60 @@
 # Pocket Laravel SDK
 
-[![run-tests](https://github.com/yannelli/pocket-laravel-sdk/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/yannelli/pocket-laravel-sdk/actions/workflows/run-tests.yml)
+- [Introduction](#introduction)
+- [Installation](#installation)
+    - [Configuration](#configuration)
+- [Making Requests](#making-requests)
+    - [Using the Facade](#using-the-facade)
+    - [Using Dependency Injection](#using-dependency-injection)
+    - [Multi-Tenant Applications](#multi-tenant-applications)
+- [Recordings](#recordings)
+    - [Retrieving Recordings](#retrieving-recordings)
+    - [Filtering Recordings](#filtering-recordings)
+    - [Iterating All Recordings](#iterating-all-recordings)
+    - [Recording Details](#recording-details)
+    - [Transcripts](#transcripts)
+    - [Summaries](#summaries)
+    - [Action Items](#action-items)
+    - [Recording States](#recording-states)
+- [Folders](#folders)
+- [Tags](#tags)
+- [Audio](#audio)
+    - [Retrieving Audio URLs](#retrieving-audio-urls)
+    - [Downloading Audio](#downloading-audio)
+    - [Scoped Audio Resource](#scoped-audio-resource)
+- [Error Handling](#error-handling)
+- [Configuration Reference](#configuration-reference)
+- [Testing](#testing)
+- [Disclaimer](#disclaimer)
 
-This is an unofficial Laravel SDK for the [Pocket API](https://public.heypocketai.com). Access your recordings, transcripts, summaries, and action items with a clean, fluent interface.
+<a name="introduction"></a>
+## Introduction
 
-## Disclaimer
+Pocket Laravel SDK provides an expressive, fluent interface for interacting with the [Pocket API](https://public.heypocketai.com). Using this SDK, you may easily access your recordings, transcripts, summaries, and action items from within your Laravel application.
 
-This is an **unofficial** SDK for the Pocket API, developed and maintained by [Ryan Yannelli](https://ryanyannelli.com). It is not affiliated with, endorsed by, or officially connected to Pocket in any way. Use at your own risk. No warranties or guarantees are provided.
+The SDK handles authentication, request building, pagination, retry logic with exponential backoff, and exception mapping—allowing you to focus on building your application rather than managing HTTP requests.
 
-## Requirements
-
-- PHP 8.2 or higher
-- Laravel 12.x
-
+<a name="installation"></a>
 ## Installation
 
-Install the package via Composer:
+You may install the Pocket Laravel SDK via the Composer package manager:
 
 ```bash
 composer require yannelli/pocket-laravel-sdk
 ```
 
-The package will automatically register its service provider.
+After installing the package, the service provider will be automatically registered via Laravel's package discovery.
 
+<a name="configuration"></a>
 ### Configuration
 
-Publish the configuration file:
+Before using the SDK, you will need to configure your Pocket API credentials. First, publish the configuration file using the `vendor:publish` Artisan command:
 
 ```bash
 php artisan vendor:publish --tag="pocket-config"
 ```
 
-This publishes `config/pocket.php`:
+This command will publish a `pocket.php` configuration file to your application's `config` directory:
 
 ```php
 return [
@@ -46,15 +69,19 @@ return [
 ];
 ```
 
-Add your Pocket API key to your `.env` file:
+Next, add your Pocket API key to your application's `.env` file:
 
 ```env
 POCKET_API_KEY=pk_your_api_key_here
 ```
 
-## Usage
+<a name="making-requests"></a>
+## Making Requests
 
+<a name="using-the-facade"></a>
 ### Using the Facade
+
+The SDK provides a `Pocket` facade that allows you to fluently access all available resources:
 
 ```php
 use Yannelli\Pocket\Facades\Pocket;
@@ -72,7 +99,10 @@ $folders = Pocket::folders()->list();
 $tags = Pocket::tags()->list();
 ```
 
+<a name="using-dependency-injection"></a>
 ### Using Dependency Injection
+
+If you prefer dependency injection, you may type-hint the `Pocket` class in your controller's constructor or method signatures. The SDK's service provider binds the `Pocket` class as a singleton, ensuring the same instance is resolved throughout your application:
 
 ```php
 use Yannelli\Pocket\Pocket;
@@ -90,40 +120,104 @@ class RecordingController extends Controller
 }
 ```
 
-## Recordings
+<a name="multi-tenant-applications"></a>
+### Multi-Tenant Applications
 
-### List Recordings
+For multi-tenant applications where each tenant may have their own Pocket API key, you may use the `withApiKey` method to create a new SDK instance with a different API key. All other configuration options are preserved from the original instance:
 
 ```php
 use Yannelli\Pocket\Facades\Pocket;
 
-// Basic listing with pagination
+// Create a tenant-specific instance
+$tenantPocket = Pocket::withApiKey($tenant->pocket_api_key);
+
+// Use the tenant-specific instance
+$recordings = $tenantPocket->recordings()->list();
+```
+
+You may also create multiple tenant instances from a single base configuration:
+
+```php
+use Yannelli\Pocket\Pocket;
+
+class TenantRecordingService
+{
+    public function __construct(
+        private Pocket $pocket
+    ) {}
+
+    public function getRecordingsForTenant(Tenant $tenant)
+    {
+        return $this->pocket
+            ->withApiKey($tenant->pocket_api_key)
+            ->recordings()
+            ->list();
+    }
+}
+```
+
+> [!NOTE]
+> The `withApiKey` method returns a new `Pocket` instance. The original instance remains unchanged, making it safe to use in concurrent or queued operations.
+
+<a name="recordings"></a>
+## Recordings
+
+The recordings resource provides methods for listing, filtering, and retrieving recordings along with their associated transcripts, summaries, and action items.
+
+<a name="retrieving-recordings"></a>
+### Retrieving Recordings
+
+To retrieve a paginated list of recordings, you may use the `list` method:
+
+```php
+use Yannelli\Pocket\Facades\Pocket;
+
 $recordings = Pocket::recordings()->list();
 
 foreach ($recordings as $recording) {
     echo $recording->title;
     echo $recording->formattedDuration(); // "1:30:45"
 }
+```
 
-// Check pagination
+The `list` method returns a `PaginatedRecordings` instance. You may check for additional pages and retrieve subsequent results:
+
+```php
 if ($recordings->hasMore()) {
     $nextPage = Pocket::recordings()->list(page: $recordings->nextPage());
 }
 ```
 
-### Filter Recordings
+To retrieve a single recording by its ID, use the `get` method:
 
 ```php
-// By folder
+$recording = Pocket::recordings()->get('rec_123');
+```
+
+<a name="filtering-recordings"></a>
+### Filtering Recordings
+
+The recordings resource provides several convenient methods for filtering results. You may filter recordings by folder:
+
+```php
 $recordings = Pocket::recordings()->inFolder('folder_123');
+```
 
-// By tags
+To filter by tags, pass an array of tag IDs to the `withTags` method:
+
+```php
 $recordings = Pocket::recordings()->withTags(['tag_1', 'tag_2']);
+```
 
-// By date range
+You may also filter recordings within a specific date range:
+
+```php
 $recordings = Pocket::recordings()->betweenDates('2025-01-01', '2025-01-31');
+```
 
-// Combined filters
+For more complex filtering, the `list` method accepts all filter parameters directly:
+
+```php
 $recordings = Pocket::recordings()->list(
     folderId: 'folder_123',
     startDate: '2025-01-01',
@@ -134,66 +228,34 @@ $recordings = Pocket::recordings()->list(
 );
 ```
 
-### Iterate All Recordings
+<a name="iterating-all-recordings"></a>
+### Iterating All Recordings
+
+When you need to process all recordings, the `all` method returns a generator that automatically handles pagination:
 
 ```php
-// Automatically handles pagination
 foreach (Pocket::recordings()->all() as $recording) {
     echo $recording->title;
 }
+```
 
-// With filters
+You may also apply filters when iterating all recordings:
+
+```php
 foreach (Pocket::recordings()->all(folderId: 'folder_123') as $recording) {
-    // Process recording
+    // Process recording...
 }
 ```
 
-### Get Recording Details
+> [!NOTE]
+> The `all` method uses PHP generators to efficiently iterate through large result sets without loading all recordings into memory at once.
+
+<a name="recording-details"></a>
+### Recording Details
+
+When retrieving a single recording, you may control which related data is included in the response. By default, all related data is included. To exclude specific data and improve response times:
 
 ```php
-$recording = Pocket::recordings()->get('rec_123');
-
-// Access transcript
-if ($recording->hasTranscript()) {
-    echo $recording->transcript->text;
-
-    // Get speakers
-    $speakers = $recording->transcript->speakers();
-
-    // Get segments for a specific speaker
-    $segments = $recording->transcript->segmentsForSpeaker('Speaker 1');
-}
-
-// Access summary
-if ($recording->hasSummary()) {
-    echo $recording->summary->title;
-
-    foreach ($recording->summary->sections as $section) {
-        echo $section->heading;
-        echo $section->content;
-    }
-}
-
-// Access action items
-if ($recording->hasActionItems()) {
-    $pendingItems = $recording->pendingActionItems();
-    $completedItems = $recording->completedActionItems();
-
-    foreach ($recording->actionItems as $item) {
-        echo $item->title;
-        echo $item->priority->label(); // "High", "Medium", etc.
-
-        if ($item->isOverdue()) {
-            // Handle overdue item
-        }
-    }
-}
-```
-
-### Control What's Included
-
-```php
-// Get recording without transcript (faster)
 $recording = Pocket::recordings()->get(
     id: 'rec_123',
     includeTranscript: false,
@@ -202,28 +264,91 @@ $recording = Pocket::recordings()->get(
 );
 ```
 
-### Check Recording State
+<a name="transcripts"></a>
+### Transcripts
+
+Recordings may include transcript data with speaker identification and time-coded segments. You may access the transcript through the recording instance:
+
+```php
+$recording = Pocket::recordings()->get('rec_123');
+
+if ($recording->hasTranscript()) {
+    // Access the full transcript text
+    echo $recording->transcript->text;
+
+    // Get a list of speakers
+    $speakers = $recording->transcript->speakers();
+
+    // Retrieve segments for a specific speaker
+    $segments = $recording->transcript->segmentsForSpeaker('Speaker 1');
+}
+```
+
+<a name="summaries"></a>
+### Summaries
+
+Recordings may include AI-generated summaries organized into sections:
+
+```php
+if ($recording->hasSummary()) {
+    echo $recording->summary->title;
+
+    foreach ($recording->summary->sections as $section) {
+        echo $section->heading;
+        echo $section->content;
+    }
+}
+```
+
+<a name="action-items"></a>
+### Action Items
+
+Recordings may include extracted action items with priority levels and completion status:
+
+```php
+if ($recording->hasActionItems()) {
+    // Filter by status
+    $pendingItems = $recording->pendingActionItems();
+    $completedItems = $recording->completedActionItems();
+
+    foreach ($recording->actionItems as $item) {
+        echo $item->title;
+        echo $item->priority->label(); // "High", "Medium", "Low"
+
+        if ($item->isOverdue()) {
+            // Handle overdue item...
+        }
+    }
+}
+```
+
+<a name="recording-states"></a>
+### Recording States
+
+Recordings progress through various processing states. You may inspect a recording's current state using the following methods:
 
 ```php
 $recording = Pocket::recordings()->get('rec_123');
 
 if ($recording->isProcessing()) {
-    echo "Still processing...";
+    echo "Recording is being processed...";
 }
 
 if ($recording->isCompleted()) {
-    echo "Ready!";
+    echo "Recording is ready!";
 }
 
 if ($recording->isFailed()) {
     echo "Processing failed: " . $recording->state->description();
 }
-
-// All states: pending, transcribing, failed, transcribed,
-// summarizing, summarization_failed, completed, unknown
 ```
 
+The available recording states are: `pending`, `transcribing`, `failed`, `transcribed`, `summarizing`, `summarization_failed`, `completed`, and `unknown`.
+
+<a name="folders"></a>
 ## Folders
+
+The folders resource allows you to list and retrieve folders:
 
 ```php
 use Yannelli\Pocket\Facades\Pocket;
@@ -241,7 +366,10 @@ $folder = Pocket::folders()->findByName('Work Meetings');
 $defaultFolder = Pocket::folders()->default();
 ```
 
+<a name="tags"></a>
 ## Tags
+
+The tags resource provides methods for listing and finding tags:
 
 ```php
 use Yannelli\Pocket\Facades\Pocket;
@@ -259,23 +387,39 @@ $tag = Pocket::tags()->find('tag_123');
 $tag = Pocket::tags()->findByName('Important');
 ```
 
+<a name="audio"></a>
 ## Audio
 
-Access and download audio files for recordings:
+The audio resource provides methods for accessing and downloading audio files associated with recordings.
+
+<a name="retrieving-audio-urls"></a>
+### Retrieving Audio URLs
+
+To get a signed URL for a recording's audio file:
 
 ```php
 use Yannelli\Pocket\Facades\Pocket;
 
-// Get a signed URL for the audio file
 $audioUrl = Pocket::audio()->getUrl('rec_123');
-echo $audioUrl->signedUrl;
-echo $audioUrl->expiresIn; // seconds until expiry
 
-// Check if the URL has expired
+echo $audioUrl->signedUrl;
+echo $audioUrl->expiresIn; // Seconds until expiry
+```
+
+Signed URLs expire after a period of time. You may check if a URL has expired and retrieve a fresh one:
+
+```php
 if ($audioUrl->isExpired()) {
     $audioUrl = Pocket::audio()->getUrl('rec_123');
 }
+```
 
+<a name="downloading-audio"></a>
+### Downloading Audio
+
+The SDK provides several methods for downloading audio content:
+
+```php
 // Get the audio file contents as a string
 $contents = Pocket::audio()->getContents('rec_123');
 
@@ -284,8 +428,12 @@ $stream = Pocket::audio()->stream('rec_123');
 
 // Download to a temporary file (auto-cleaned up on script end)
 $tempPath = Pocket::audio()->download('rec_123');
+```
 
-// Save to Laravel storage disk
+You may also save audio files directly to Laravel's filesystem:
+
+```php
+// Save to a Laravel storage disk
 Pocket::audio()->saveTo('recordings/audio.mp3', 's3', [], 'rec_123');
 
 // Save using streaming (memory efficient)
@@ -295,12 +443,20 @@ Pocket::audio()->saveStreamTo('recordings/audio.mp3', 'local', [], 'rec_123');
 Pocket::audio()->saveToPath('/path/to/audio.mp3', 'rec_123');
 ```
 
-### Scoped Audio Resource
-
-You can scope the audio resource to a specific recording:
+To manually clean up temporary files created by the `download` method:
 
 ```php
-// Create a scoped audio resource
+use Yannelli\Pocket\Resources\AudioResource;
+
+AudioResource::cleanup();
+```
+
+<a name="scoped-audio-resource"></a>
+### Scoped Audio Resource
+
+When working with a single recording's audio, you may create a scoped audio resource to simplify method calls:
+
+```php
 $audio = Pocket::audio('rec_123');
 
 // All methods now work without passing the recording ID
@@ -309,34 +465,10 @@ $contents = $audio->getContents();
 $tempPath = $audio->download();
 ```
 
-### Cleanup Temporary Files
-
-```php
-use Yannelli\Pocket\Resources\AudioResource;
-
-// Manually clean up temporary files created by download()
-AudioResource::cleanup();
-```
-
-## Data Objects
-
-All API responses are returned as strongly-typed data objects:
-
-```php
-use Yannelli\Pocket\Data\Recording;
-use Yannelli\Pocket\Data\Folder;
-use Yannelli\Pocket\Data\Tag;
-use Yannelli\Pocket\Data\Transcript;
-use Yannelli\Pocket\Data\Summary;
-use Yannelli\Pocket\Data\ActionItem;
-use Yannelli\Pocket\Data\AudioUrl;
-
-// All objects implement Arrayable and JsonSerializable
-$array = $recording->toArray();
-$json = json_encode($recording);
-```
-
+<a name="error-handling"></a>
 ## Error Handling
+
+The SDK throws specific exceptions based on the HTTP response status code. You may catch these exceptions to handle different error conditions:
 
 ```php
 use Yannelli\Pocket\Facades\Pocket;
@@ -355,38 +487,56 @@ try {
     // Recording not found (404)
 } catch (RateLimitException $e) {
     // Too many requests (429)
-    $retryAfter = $e->getRetryAfter(); // seconds to wait
+    $retryAfter = $e->getRetryAfter();
 } catch (ValidationException $e) {
     // Invalid parameters (400)
     $details = $e->getDetails();
 } catch (ServerException $e) {
-    // Server error (500)
+    // Server error (5xx)
 } catch (PocketException $e) {
     // Any other API error
 }
 ```
 
-## Configuration Options
+> [!NOTE]
+> The `RateLimitException` provides a `getRetryAfter()` method that returns the number of seconds you should wait before making another request.
+
+<a name="configuration-reference"></a>
+## Configuration Reference
+
+The following configuration options are available:
 
 | Option | Environment Variable | Default | Description |
 |--------|---------------------|---------|-------------|
-| `api_key` | `POCKET_API_KEY` | - | Your Pocket API key |
+| `api_key` | `POCKET_API_KEY` | — | Your Pocket API key |
 | `base_url` | `POCKET_BASE_URL` | `https://public.heypocketai.com` | API base URL |
 | `api_version` | `POCKET_API_VERSION` | `v1` | API version |
 | `timeout` | `POCKET_TIMEOUT` | `30` | Request timeout in seconds |
 | `retry.times` | `POCKET_RETRY_TIMES` | `3` | Number of retry attempts |
 | `retry.sleep` | `POCKET_RETRY_SLEEP` | `1000` | Retry delay in milliseconds |
 
+<a name="testing"></a>
 ## Testing
+
+To run the SDK's test suite:
 
 ```bash
 composer test
 ```
 
+<a name="disclaimer"></a>
+## Disclaimer
+
+This is an **unofficial** SDK for the Pocket API, developed and maintained by [Ryan Yannelli](https://ryanyannelli.com). It is not affiliated with, endorsed by, or officially connected to Pocket in any way. Use at your own risk. No warranties or guarantees are provided.
+
+## Requirements
+
+- PHP 8.2 or higher
+- Laravel 12.x
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
 
 ## Credits
 

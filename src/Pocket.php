@@ -22,6 +22,13 @@ class Pocket
     protected ?AudioResource $audio = null;
 
     /**
+     * Configuration values for creating new instances.
+     *
+     * @var array{api_key: string, base_url: string, api_version: string, timeout: int, retry_times: int, retry_sleep: int}
+     */
+    protected array $config;
+
+    /**
      * Create a new Pocket SDK instance.
      *
      * @param  string  $apiKey  The Pocket API key
@@ -39,6 +46,15 @@ class Pocket
         int $retryTimes = 3,
         int $retrySleep = 1000
     ) {
+        $this->config = [
+            'api_key' => $apiKey,
+            'base_url' => $baseUrl,
+            'api_version' => $apiVersion,
+            'timeout' => $timeout,
+            'retry_times' => $retryTimes,
+            'retry_sleep' => $retrySleep,
+        ];
+
         $this->client = new PocketClient(
             apiKey: $apiKey,
             baseUrl: $baseUrl,
@@ -63,6 +79,27 @@ class Pocket
             timeout: $config['timeout'] ?? 30,
             retryTimes: $config['retry']['times'] ?? 3,
             retrySleep: $config['retry']['sleep'] ?? 1000
+        );
+    }
+
+    /**
+     * Create a new Pocket instance with a different API key.
+     *
+     * This method is useful for multi-tenant applications where each tenant
+     * may have their own Pocket API key. All other configuration options
+     * are preserved from the current instance.
+     *
+     * @param  string  $apiKey  The new API key to use
+     */
+    public function withApiKey(string $apiKey): self
+    {
+        return new self(
+            apiKey: $apiKey,
+            baseUrl: $this->config['base_url'],
+            apiVersion: $this->config['api_version'],
+            timeout: $this->config['timeout'],
+            retryTimes: $this->config['retry_times'],
+            retrySleep: $this->config['retry_sleep']
         );
     }
 

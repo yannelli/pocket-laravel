@@ -61,3 +61,40 @@ it('returns same resource instance on multiple calls', function () {
 
     expect($recordings1)->toBe($recordings2);
 });
+
+it('can create a new instance with different api key', function () {
+    $pocket = new Pocket('pk_original_key');
+    $newPocket = $pocket->withApiKey('pk_new_key');
+
+    expect($newPocket)->toBeInstanceOf(Pocket::class)
+        ->and($newPocket)->not->toBe($pocket)
+        ->and($newPocket->getClient()->getApiKey())->toBe('pk_new_key')
+        ->and($pocket->getClient()->getApiKey())->toBe('pk_original_key');
+});
+
+it('preserves configuration when using withApiKey', function () {
+    $pocket = new Pocket(
+        apiKey: 'pk_original_key',
+        baseUrl: 'https://custom.example.com',
+        apiVersion: 'v2',
+        timeout: 60,
+        retryTimes: 5,
+        retrySleep: 2000
+    );
+
+    $newPocket = $pocket->withApiKey('pk_new_key');
+
+    expect($newPocket->getClient()->getApiKey())->toBe('pk_new_key')
+        ->and($newPocket->getClient()->getBaseUrl())->toBe('https://custom.example.com')
+        ->and($newPocket->getClient()->getApiVersion())->toBe('v2');
+});
+
+it('creates independent instances with withApiKey', function () {
+    $pocket = new Pocket('pk_original_key');
+    $tenantA = $pocket->withApiKey('pk_tenant_a');
+    $tenantB = $pocket->withApiKey('pk_tenant_b');
+
+    expect($tenantA->getClient()->getApiKey())->toBe('pk_tenant_a')
+        ->and($tenantB->getClient()->getApiKey())->toBe('pk_tenant_b')
+        ->and($pocket->getClient()->getApiKey())->toBe('pk_original_key');
+});
