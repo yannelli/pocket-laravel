@@ -50,7 +50,7 @@ class PocketClient
      */
     public function __construct(
         string $apiKey,
-        string $baseUrl = 'https://public.heypocket.com',
+        string $baseUrl = 'https://public.heypocketai.com',
         string $apiVersion = 'v1',
         int $timeout = 30,
         int $retryTimes = 3,
@@ -77,7 +77,7 @@ class PocketClient
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer '.$this->apiKey,
-                'User-Agent' => 'PocketClient/1.0.0',
+                'User-Agent' => 'LaravelPocketClient/1.0.0',
             ],
         ]);
     }

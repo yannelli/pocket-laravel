@@ -21,7 +21,7 @@ return [
     | unless you are using a custom or staging environment.
     |
     */
-    'base_url' => env('POCKET_BASE_URL', 'https://public.heypocket.com'),
+    'base_url' => env('POCKET_BASE_URL', 'https://public.heypocketai.com'),
 
     /*
     |--------------------------------------------------------------------------

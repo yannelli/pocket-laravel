@@ -18,7 +18,7 @@ function createMockPocketClient(array $responses, &$history = []): PocketClient
 
     return new PocketClient(
         apiKey: 'pk_test_key',
-        baseUrl: 'https://https://public.heypocket.com',
+        baseUrl: 'https://public.heypocketai.com',
         apiVersion: 'v1',
         handler: $handlerStack
     );
