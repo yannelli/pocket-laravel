@@ -6,6 +6,7 @@
 - [Making Requests](#making-requests)
     - [Using the Facade](#using-the-facade)
     - [Using Dependency Injection](#using-dependency-injection)
+    - [Multi-Tenant Applications](#multi-tenant-applications)
 - [Recordings](#recordings)
     - [Retrieving Recordings](#retrieving-recordings)
     - [Filtering Recordings](#filtering-recordings)
@@ -118,6 +119,45 @@ class RecordingController extends Controller
     }
 }
 ```
+
+<a name="multi-tenant-applications"></a>
+### Multi-Tenant Applications
+
+For multi-tenant applications where each tenant may have their own Pocket API key, you may use the `withApiKey` method to create a new SDK instance with a different API key. All other configuration options are preserved from the original instance:
+
+```php
+use Yannelli\Pocket\Facades\Pocket;
+
+// Create a tenant-specific instance
+$tenantPocket = Pocket::withApiKey($tenant->pocket_api_key);
+
+// Use the tenant-specific instance
+$recordings = $tenantPocket->recordings()->list();
+```
+
+You may also create multiple tenant instances from a single base configuration:
+
+```php
+use Yannelli\Pocket\Pocket;
+
+class TenantRecordingService
+{
+    public function __construct(
+        private Pocket $pocket
+    ) {}
+
+    public function getRecordingsForTenant(Tenant $tenant)
+    {
+        return $this->pocket
+            ->withApiKey($tenant->pocket_api_key)
+            ->recordings()
+            ->list();
+    }
+}
+```
+
+> [!NOTE]
+> The `withApiKey` method returns a new `Pocket` instance. The original instance remains unchanged, making it safe to use in concurrent or queued operations.
 
 <a name="recordings"></a>
 ## Recordings
