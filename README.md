@@ -40,7 +40,7 @@ The SDK handles authentication, request building, pagination, retry logic with e
 You may install the Pocket Laravel SDK via the Composer package manager:
 
 ```bash
-composer require yannelli/pocket-laravel-sdk
+composer require yannelli/pocket-laravel
 ```
 
 After installing the package, the service provider will be automatically registered via Laravel's package discovery.
