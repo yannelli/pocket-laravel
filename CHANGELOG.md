@@ -2,6 +2,14 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## v1.1.1 - 2026-01-22
+
+### What's Changed
+
+* Update copyright information in LICENSE.md
+
+**Full Changelog**: https://github.com/yannelli/pocket-laravel/compare/v1.1.0...v1.1.1
+
 ## v1.1.0 - 2026-01-22
 
 ### What's Changed
