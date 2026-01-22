@@ -2,6 +2,15 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## v1.1.0 - 2026-01-22
+
+### What's Changed
+
+* Rewrite package README in Laravel documentation style by @yannelli in https://github.com/yannelli/pocket-laravel/pull/4
+* Rename package to pocket-laravel by @yannelli in https://github.com/yannelli/pocket-laravel/pull/5
+
+**Full Changelog**: https://github.com/yannelli/pocket-laravel/compare/v1.0.0...v1.1.0
+
 ## v1.0.0 - 2025-12-20
 
 ### What's Changed
