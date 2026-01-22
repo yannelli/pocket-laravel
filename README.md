@@ -34,7 +34,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Pocket Laravel SDK provides an expressive, fluent interface for interacting with the [Pocket API](https://public.heypocketai.com). Using this SDK, you may easily access your recordings, transcripts, summaries, and action items from within your Laravel application.
+Pocket Laravel SDK provides an expressive, fluent interface for interacting with the [Pocket API](https://public.heypocketai.com/docs/index.html). Using this SDK, you may easily access your recordings, transcripts, summaries, and action items from within your Laravel application.
 
 The SDK handles authentication, request building, pagination, retry logic with exponential backoff, and exception mapping—allowing you to focus on building your application rather than managing HTTP requests.
 
@@ -531,7 +531,7 @@ composer test
 <a name="disclaimer"></a>
 ## Disclaimer
 
-This is an **unofficial** SDK for the Pocket API, developed and maintained by [Ryan Yannelli](https://ryanyannelli.com). It is not affiliated with, endorsed by, or officially connected to Pocket in any way. Use at your own risk. No warranties or guarantees are provided.
+This is an **unofficial** SDK for the Pocket API, developed and maintained by [Ryan Yannelli](https://ryanyannelli.com). It is not affiliated with, endorsed by, or officially connected to Pocket and Open Vision Engineering Inc any way. Use at your own risk. No warranties or guarantees are provided.
 
 ## Requirements
 
