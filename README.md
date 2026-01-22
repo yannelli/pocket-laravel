@@ -1,5 +1,9 @@
 # Pocket Laravel SDK
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/yannelli/attempt.svg?style=flat-square)](https://packagist.org/packages/yannelli/pocket-laravel)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/yannelli/pocket-laravel/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/yannelli/pocket-laravel/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/yannelli/pocket-laravel.svg?style=flat-square)](https://packagist.org/packages/yannelli/pocket-laravel)
+
 - [Introduction](#introduction)
 - [Installation](#installation)
     - [Configuration](#configuration)
