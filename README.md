@@ -535,8 +535,8 @@ This is an **unofficial** SDK for the Pocket API, developed and maintained by [R
 
 ## Requirements
 
-- PHP 8.2 or higher
-- Laravel 12.x
+- PHP 8.3 or higher
+- Laravel 12.x or 13.x
 
 ## Changelog
 
@@ -545,6 +545,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 ## Credits
 
 - [Ryan Yannelli](https://github.com/yannelli)
+  - [Website](https://ryanyannelli.com)
 
 ## License
 
