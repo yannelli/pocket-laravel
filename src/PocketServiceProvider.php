@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Yannelli\Pocket;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use InvalidArgumentException;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class PocketServiceProvider extends PackageServiceProvider
+class PocketServiceProvider extends PackageServiceProvider implements DeferrableProvider
 {
     /**
      * Configure the package.
@@ -40,5 +41,18 @@ class PocketServiceProvider extends PackageServiceProvider
         });
 
         $this->app->alias(Pocket::class, 'pocket');
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array<int, string>
+     */
+    public function provides(): array
+    {
+        return [
+            Pocket::class,
+            'pocket',
+        ];
     }
 }
