@@ -2,6 +2,15 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## v1.2.0 - 2026-03-19
+
+### What's Changed
+
+* Add Laravel 13 support by @yannelli in https://github.com/yannelli/pocket-laravel/pull/6
+* Make PocketServiceProvider a deferred service provider by @yannelli in https://github.com/yannelli/pocket-laravel/pull/7
+
+**Full Changelog**: https://github.com/yannelli/pocket-laravel/compare/v1.1.1...v1.2.0
+
 ## v1.1.1 - 2026-01-22
 
 ### What's Changed
