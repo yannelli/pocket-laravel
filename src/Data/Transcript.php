@@ -20,10 +20,29 @@ final readonly class Transcript implements Arrayable, JsonSerializable
     /**
      * Create a Transcript instance from an array.
      *
-     * @param  array{text: string, segments?: array<array{start: float|int|string|null, end: float|int|string|null, text?: string, speaker?: string|null}>}  $data
+     * @param  string|array{text?: string, segments?: array<array{start: float|int|string|null, end: float|int|string|null, text?: string, speaker?: string|null}>}|array<int, array{start: float|int|string|null, end: float|int|string|null, text?: string, speaker?: string|null}>  $data
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(string|array $data): self
     {
+        if (is_string($data)) {
+            return new self(text: $data);
+        }
+
+        if (array_is_list($data)) {
+            $segments = TranscriptSegment::collection($data);
+
+            return new self(
+                text: implode(' ', array_filter(
+                    array_map(
+                        static fn (TranscriptSegment $segment): string => $segment->text ?? '',
+                        $segments
+                    ),
+                    static fn (string $text): bool => $text !== ''
+                )),
+                segments: $segments,
+            );
+        }
+
         return new self(
             text: $data['text'] ?? null,
             segments: isset($data['segments'])

@@ -23,14 +23,14 @@ final readonly class AudioUrl implements Arrayable, JsonSerializable
     /**
      * Create an AudioUrl instance from an array.
      *
-     * @param  array{signed_url?: string|null, expires_in?: int|null, expires_at?: string|null}  $data
+     * @param  array{signed_url?: string|null, url?: string|null, expires_in?: int|null, expires_at?: string|null}  $data
      *
      * @throws Exception
      */
     public static function fromArray(array $data): self
     {
         return new self(
-            signedUrl: $data['signed_url'] ?? null,
+            signedUrl: $data['signed_url'] ?? $data['url'] ?? null,
             expiresIn: $data['expires_in'] ?? null,
             expiresAt: isset($data['expires_at']) ? new DateTimeImmutable($data['expires_at']) : null,
         );

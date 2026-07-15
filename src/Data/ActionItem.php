@@ -25,28 +25,39 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
     /**
      * Create an ActionItem instance from an array.
      *
-     * @param array{id: string, title?: string, description?: string|null, status?: string, priority?: string,
-     *                          due_date?: string|null} $data
+     * @param  array<string, mixed>  $data
      *
      * @throws Exception
      */
     public static function fromArray(array $data): self
     {
+        $status = strtolower((string) ($data['status'] ?? 'pending'));
+        $status = match ($status) {
+            'todo', 'open' => 'pending',
+            'done' => 'completed',
+            default => $status,
+        };
+
+        if (($data['isCompleted'] ?? $data['is_completed'] ?? false) === true) {
+            $status = 'completed';
+        }
+
+        $dueDate = $data['due_date'] ?? $data['dueDate'] ?? null;
+
         return new self(
             id: $data['id'],
-            title: $data['title'],
+            title: $data['title'] ?? $data['label'] ?? null,
             description: $data['description'] ?? null,
-            status: ActionItemStatus::tryFrom($data['status'] ?? 'pending') ?? ActionItemStatus::Pending,
-            priority: ActionItemPriority::tryFrom($data['priority'] ?? 'medium') ?? ActionItemPriority::Medium,
-            dueDate: isset($data['due_date']) ? new DateTimeImmutable($data['due_date']) : null,
+            status: ActionItemStatus::tryFrom($status) ?? ActionItemStatus::Pending,
+            priority: ActionItemPriority::tryFrom(strtolower((string) ($data['priority'] ?? 'medium'))) ?? ActionItemPriority::Medium,
+            dueDate: $dueDate !== null ? new DateTimeImmutable($dueDate) : null,
         );
     }
 
     /**
      * Create a collection of ActionItem instances from an array.
      *
-     * @param array<array{id: string, title: string, description?: string|null, status?: string, priority?: string,
-     *                                due_date?: string|null}> $items
+     * @param  array<int, array<string, mixed>>  $items
      * @return array<ActionItem>
      *
      * @throws Exception

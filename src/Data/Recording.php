@@ -9,7 +9,6 @@ use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 use Yannelli\Pocket\Enums\RecordingState;
-use Yannelli\Pocket\Resources\AudioResource;
 
 final readonly class Recording implements Arrayable, JsonSerializable
 {
@@ -35,26 +34,54 @@ final readonly class Recording implements Arrayable, JsonSerializable
     /**
      * Create a Recording instance from an array.
      *
-     * @param array{
-     *     id: string,
-     *     title: string,
-     *     folder_id?: string|null,
-     *     duration?: int|string|null,
-     *     state?: string,
-     *     language?: string|null,
-     *     created_at: string,
-     *     updated_at: string,
-     *     tags?: array<int, array{id: string, name: string, color: string, usage_count?: int|null}>,
-     *     transcript?: array{text: string, segments?: array<int, array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>},
-     *     summary?: array{title: string, sections?: array<int, array{heading: string, content: string}>},
-     *     action_items?: array<int, array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>
-     * } $data
+     * @param  array<string, mixed>  $data
      *
      * @throws Exception
      */
-    public static function fromArray(array $data): self
-    {
+    public static function fromArray(
+        array $data,
+        bool $includeSummary = true,
+        bool $includeActionItems = true,
+        ?string $summarizationId = null,
+    ): self {
         $duration = $data['duration'] ?? null;
+        $summarizations = $data['summarizations'] ?? [];
+        $selectedSummarization = null;
+        $selectedUpdatedAt = '';
+
+        foreach ($summarizations as $id => $summarization) {
+            if (! is_array($summarization) || ! isset($summarization['v2'])) {
+                continue;
+            }
+
+            if ($summarizationId !== null && ($id === $summarizationId || ($summarization['summarizationId'] ?? null) === $summarizationId)) {
+                $selectedSummarization = $summarization;
+                break;
+            }
+
+            if (($summarization['processingStatus'] ?? null) !== 'completed') {
+                continue;
+            }
+
+            $updatedAt = (string) ($summarization['updatedAt'] ?? $summarization['updated_at'] ?? '');
+
+            if ($selectedSummarization === null || $updatedAt > $selectedUpdatedAt) {
+                $selectedSummarization = $summarization;
+                $selectedUpdatedAt = $updatedAt;
+            }
+        }
+
+        $summary = $includeSummary
+            ? ($data['summary'] ?? $selectedSummarization['v2']['summary'] ?? null)
+            : null;
+        $actionItems = $includeActionItems
+            ? ($data['action_items']
+                ?? $selectedSummarization['v2']['actionItems']['actionItems']
+                ?? $selectedSummarization['v2']['actionItems']['actions']
+                ?? $summarizations['v2_action_items']['actionItems']
+                ?? [])
+            : [];
+        $transcript = $data['transcript'] ?? $data['raw_transcript'] ?? null;
 
         return new self(
             id: $data['id'],
@@ -66,29 +93,16 @@ final readonly class Recording implements Arrayable, JsonSerializable
             createdAt: new DateTimeImmutable($data['created_at']),
             updatedAt: new DateTimeImmutable($data['updated_at']),
             tags: isset($data['tags']) ? Tag::collection($data['tags']) : [],
-            transcript: isset($data['transcript']) ? Transcript::fromArray($data['transcript']) : null,
-            summary: isset($data['summary']) ? Summary::fromArray($data['summary']) : null,
-            actionItems: isset($data['action_items']) ? ActionItem::collection($data['action_items']) : [],
+            transcript: $transcript !== null ? Transcript::fromArray($transcript) : null,
+            summary: $summary !== null ? Summary::fromArray($summary) : null,
+            actionItems: ActionItem::collection($actionItems),
         );
     }
 
     /**
      * Create a collection of Recording instances from an array.
      *
-     * @param array<int, array{
-     *     id: string,
-     *     title: string,
-     *     folder_id?: string|null,
-     *     duration?: int|string|null,
-     *     state?: string,
-     *     language?: string|null,
-     *     created_at: string,
-     *     updated_at: string,
-     *     tags?: array<int, array{id: string, name: string, color: string, usage_count?: int|null}>,
-     *     transcript?: array{text: string, segments?: array<int, array{start: float|int|string, end: float|int|string, text: string, speaker?: string|null}>},
-     *     summary?: array{title: string, sections?: array<int, array{heading: string, content: string}>},
-     *     action_items?: array<int, array{id: string, title: string, description?: string|null, status?: string, priority?: string, due_date?: string|null}>
-     * }> $items
+     * @param  array<int, array<string, mixed>>  $items
      * @return array<int, Recording>
      *
      * @throws Exception
@@ -103,9 +117,14 @@ final readonly class Recording implements Arrayable, JsonSerializable
      */
     public function formattedDuration(): string
     {
-        $hours = floor($this->duration / 3600);
-        $minutes = floor(($this->duration % 3600) / 60);
-        $seconds = $this->duration % 60;
+        if (is_string($this->duration) && ! is_numeric($this->duration)) {
+            return $this->duration;
+        }
+
+        $duration = (int) ($this->duration ?? 0);
+        $hours = floor($duration / 3600);
+        $minutes = floor(($duration % 3600) / 60);
+        $seconds = $duration % 60;
 
         if ($hours > 0) {
             return sprintf('%d:%02d:%02d', $hours, $minutes, $seconds);
@@ -119,7 +138,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
      */
     public function isProcessing(): bool
     {
-        return $this->state->isProcessing();
+        return $this->state?->isProcessing() ?? false;
     }
 
     /**
@@ -127,7 +146,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
      */
     public function isFailed(): bool
     {
-        return $this->state->isFailed();
+        return $this->state?->isFailed() ?? false;
     }
 
     /**
@@ -179,7 +198,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
      */
     public function isCompleted(): bool
     {
-        return $this->state->isCompleted();
+        return $this->state?->isCompleted() ?? false;
     }
 
     /**
@@ -230,7 +249,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
             'title' => $this->title,
             'folder_id' => $this->folderId,
             'duration' => $this->duration,
-            'state' => $this->state->value,
+            'state' => $this->state?->value,
             'language' => $this->language,
             'created_at' => $this->createdAt->format('c'),
             'updated_at' => $this->updatedAt->format('c'),
