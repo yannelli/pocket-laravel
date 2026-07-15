@@ -49,8 +49,8 @@ class RecordingsResource
             'start_date' => $this->formatDate($startDate),
             'end_date' => $this->formatDate($endDate),
             'tag_ids' => count($tagIds) > 0 ? implode(',', $tagIds) : null,
-            'page' => $page,
-            'limit' => min($limit, 100),
+            'page' => max($page, 1),
+            'limit' => max(1, min($limit, 100)),
         ];
 
         $response = $this->client->get('recordings', $query);
@@ -67,6 +67,7 @@ class RecordingsResource
      * @param  bool  $includeTranscript  Include transcript data
      * @param  bool  $includeSummary  Include summary data
      * @param  bool  $includeActionItems  Include action items
+     * @param  string|null  $summarizationId  Filter to a specific summarization ID
      *
      * @throws PocketException
      * @throws Exception
@@ -75,17 +76,23 @@ class RecordingsResource
         string $id,
         bool $includeTranscript = true,
         bool $includeSummary = true,
-        bool $includeActionItems = true
+        bool $includeActionItems = true,
+        ?string $summarizationId = null
     ): Recording {
         $query = [
             'include_transcript' => $includeTranscript ? 'true' : 'false',
-            'include_summary' => $includeSummary ? 'true' : 'false',
-            'include_action_items' => $includeActionItems ? 'true' : 'false',
+            'include_summarizations' => ($includeSummary || $includeActionItems) ? 'true' : 'false',
+            'summarization_id' => $summarizationId,
         ];
 
-        $response = $this->client->get("recordings/{$id}", $query);
+        $response = $this->client->get('recordings/'.rawurlencode($id), $query);
 
-        return Recording::fromArray($response['data']);
+        return Recording::fromArray(
+            data: $response['data'],
+            includeSummary: $includeSummary,
+            includeActionItems: $includeActionItems,
+            summarizationId: $summarizationId,
+        );
     }
 
     /**

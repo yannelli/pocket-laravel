@@ -74,3 +74,11 @@ it('correctly detects non-expired URLs', function () {
     expect($audioUrl->isExpired())->toBeFalse()
         ->and($audioUrl->secondsUntilExpiry())->toBeGreaterThan(3500);
 });
+
+it('accepts the current url response field', function () {
+    $audioUrl = AudioUrl::fromArray([
+        'url' => 'https://example.com/current-audio.mp3',
+    ]);
+
+    expect($audioUrl->signedUrl)->toBe('https://example.com/current-audio.mp3');
+});

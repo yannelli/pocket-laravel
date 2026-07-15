@@ -18,6 +18,7 @@ function createFoldersMockClient(array $responses, array &$history = []): Pocket
         apiKey: 'pk_test_key',
         baseUrl: 'https://public.heypocketai.com',
         apiVersion: 'v1',
+        retryTimes: 0,
         handler: $handlerStack
     );
 }

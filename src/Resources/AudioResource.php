@@ -95,10 +95,12 @@ class AudioResource
      * @throws PocketException
      * @throws Exception
      */
-    public function getUrl(?string $recordingId = null): AudioUrl
+    public function getUrl(?string $recordingId = null, ?int $expiresIn = null): AudioUrl
     {
         $id = $this->resolveRecordingId($recordingId);
-        $response = $this->client->get("recordings/{$id}/audio-url");
+        $response = $this->client->get('recordings/'.rawurlencode($id).'/audio-url', [
+            'expires_in' => $expiresIn === null ? null : max(60, min($expiresIn, 86400)),
+        ]);
 
         return AudioUrl::fromArray($response['data']);
     }

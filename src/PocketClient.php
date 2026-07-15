@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yannelli\Pocket;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
@@ -61,9 +63,9 @@ class PocketClient
         $this->baseUrl = rtrim($baseUrl, '/');
         $this->apiVersion = $apiVersion;
 
-        $stack = $handler ?? HandlerStack::create();
+        $stack = $handler !== null ? clone $handler : HandlerStack::create();
 
-        if ($handler === null) {
+        if ($retryTimes > 0) {
             $stack->push($this->retryMiddleware($retryTimes, $retrySleep));
         }
 
@@ -128,11 +130,46 @@ class PocketClient
 
                 return false;
             },
-            function (int $retries) use ($delay): int {
-                // Exponential backoff: delay * 2^retries
-                return $delay * (int) pow(2, $retries);
+            function (int $retries, ?ResponseInterface $response = null) use ($delay): int {
+                if ($response?->getStatusCode() === 429 && $response->hasHeader('Retry-After')) {
+                    $retryAfter = $this->parseRetryAfter($response);
+
+                    if ($retryAfter !== null) {
+                        return min($retryAfter, intdiv(PHP_INT_MAX, 1000)) * 1000;
+                    }
+                }
+
+                return $delay * (int) pow(2, max(0, $retries - 1));
             }
         );
+    }
+
+    /**
+     * Parse a Retry-After header into seconds.
+     */
+    protected function parseRetryAfter(ResponseInterface $response): ?int
+    {
+        if (! $response->hasHeader('Retry-After')) {
+            return null;
+        }
+
+        $retryAfter = trim($response->getHeaderLine('Retry-After'));
+
+        if (preg_match('/^\d+$/', $retryAfter) === 1) {
+            return min((int) $retryAfter, PHP_INT_MAX);
+        }
+
+        $retryAt = DateTimeImmutable::createFromFormat(
+            DATE_RFC7231,
+            $retryAfter,
+            new DateTimeZone('GMT')
+        );
+
+        if ($retryAt === false || $retryAt->format(DATE_RFC7231) !== $retryAfter) {
+            return null;
+        }
+
+        return max(0, $retryAt->getTimestamp() - time());
     }
 
     /**
@@ -146,7 +183,9 @@ class PocketClient
      */
     public function get(string $endpoint, array $query = []): array
     {
-        return $this->request('GET', $endpoint, ['query' => array_filter($query)]);
+        return $this->request('GET', $endpoint, [
+            'query' => array_filter($query, static fn (mixed $value): bool => $value !== null),
+        ]);
     }
 
     /**
@@ -199,7 +238,7 @@ class PocketClient
         $body = (string) $response->getBody();
         $data = json_decode($body, true);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (json_last_error() !== JSON_ERROR_NONE || ! is_array($data)) {
             throw new PocketException('Invalid JSON response from API');
         }
 
@@ -232,9 +271,7 @@ class PocketClient
             404 => throw new NotFoundException($body['error'] ?? 'Resource not found'),
             429 => throw new RateLimitException(
                 $body['error'] ?? 'Rate limit exceeded',
-                $response->hasHeader('Retry-After')
-                    ? (int) $response->getHeader('Retry-After')[0]
-                    : null
+                $this->parseRetryAfter($response)
             ),
             400 => throw new ValidationException(
                 $body['error'] ?? 'Validation failed',

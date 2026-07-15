@@ -34,7 +34,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Pocket Laravel SDK provides an expressive, fluent interface for interacting with the [Pocket API](https://public.heypocketai.com/docs/index.html). Using this SDK, you may easily access your recordings, transcripts, summaries, and action items from within your Laravel application.
+Pocket Laravel SDK provides an expressive, fluent interface for interacting with the [Pocket API](https://docs.heypocketai.com/docs/api). Using this SDK, you may easily access your recordings, transcripts, summaries, and action items from within your Laravel application.
 
 The SDK handles authentication, request building, pagination, retry logic with exponential backoff, and exception mapping—allowing you to focus on building your application rather than managing HTTP requests.
 
@@ -264,7 +264,8 @@ $recording = Pocket::recordings()->get(
     id: 'rec_123',
     includeTranscript: false,
     includeSummary: true,
-    includeActionItems: true
+    includeActionItems: true,
+    summarizationId: 'sum_123'
 );
 ```
 
@@ -353,6 +354,9 @@ The available recording states are: `pending`, `transcribing`, `failed`, `transc
 ## Folders
 
 The folders resource allows you to list and retrieve folders:
+
+> [!NOTE]
+> Folders are not listed in Pocket's current public API reference. This legacy resource remains available for compatibility with Pocket deployments that still expose the `/public/folders` endpoint.
 
 ```php
 use Yannelli\Pocket\Facades\Pocket;

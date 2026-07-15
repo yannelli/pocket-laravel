@@ -23,6 +23,7 @@ function createErrorMockClient(array $responses, array &$history = []): PocketCl
         apiKey: 'pk_test_key',
         baseUrl: 'https://public.heypocketai.com',
         apiVersion: 'v1',
+        retryTimes: 0,
         handler: $handlerStack
     );
 }
@@ -103,6 +104,40 @@ describe('Error Handling', function () {
         }
     });
 
+    it('parses HTTP-date Retry-After headers on exhausted rate limits', function () {
+        $retryAt = time() + 60;
+        $client = createErrorMockClient([
+            errorJsonResponse([
+                'success' => false,
+                'error' => 'Too many requests',
+            ], 429, ['Retry-After' => gmdate(DATE_RFC7231, $retryAt)]),
+        ]);
+
+        try {
+            $client->get('recordings');
+            $this->fail('Expected RateLimitException');
+        } catch (RateLimitException $e) {
+            expect($e->getRetryAfter())->toBeGreaterThanOrEqual(59)
+                ->and($e->getRetryAfter())->toBeLessThanOrEqual(60);
+        }
+    });
+
+    it('rejects malformed Retry-After headers', function () {
+        $client = createErrorMockClient([
+            errorJsonResponse([
+                'success' => false,
+                'error' => 'Too many requests',
+            ], 429, ['Retry-After' => '-1']),
+        ]);
+
+        try {
+            $client->get('recordings');
+            $this->fail('Expected RateLimitException');
+        } catch (RateLimitException $e) {
+            expect($e->getRetryAfter())->toBeNull();
+        }
+    });
+
     it('throws ValidationException on 400', function () {
         $client = createErrorMockClient([
             errorJsonResponse([
@@ -165,6 +200,15 @@ describe('Error Handling', function () {
         $resource = new RecordingsResource($client);
 
         expect(fn () => $resource->list())
+            ->toThrow(PocketException::class, 'Invalid JSON response from API');
+    });
+
+    it('throws PocketException on a valid non-object JSON response', function () {
+        $client = createErrorMockClient([
+            new Response(200, ['Content-Type' => 'application/json'], 'null'),
+        ]);
+
+        expect(fn () => $client->get('recordings'))
             ->toThrow(PocketException::class, 'Invalid JSON response from API');
     });
 

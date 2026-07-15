@@ -89,3 +89,36 @@ it('can create a collection of action items', function () {
     expect($items)->toHaveCount(2)
         ->and($items[0])->toBeInstanceOf(ActionItem::class);
 });
+
+it('normalizes current API action item fields', function () {
+    $actionItem = ActionItem::fromArray([
+        'id' => 'ai_current',
+        'label' => 'Current API task',
+        'status' => 'TODO',
+        'dueDate' => '2030-01-01',
+        'isCompleted' => true,
+    ]);
+
+    expect($actionItem->title)->toBe('Current API task')
+        ->and($actionItem->isCompleted())->toBeTrue()
+        ->and($actionItem->dueDate->format('Y-m-d'))->toBe('2030-01-01');
+});
+
+it('serializes action items and labels their enums', function () {
+    $actionItem = ActionItem::fromArray([
+        'id' => 'ai_1',
+        'title' => 'Task',
+        'status' => 'in_progress',
+        'priority' => 'urgent',
+    ]);
+
+    expect($actionItem->status->label())->toBe('In Progress')
+        ->and($actionItem->priority->label())->toBe('Urgent')
+        ->and($actionItem->toArray())->toBe([
+            'id' => 'ai_1',
+            'title' => 'Task',
+            'status' => 'in_progress',
+            'priority' => 'urgent',
+        ])
+        ->and(json_decode(json_encode($actionItem), true))->toBe($actionItem->toArray());
+});

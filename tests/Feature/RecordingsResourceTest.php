@@ -20,6 +20,7 @@ function createMockClient(array $responses, array &$history = []): PocketClient
         apiKey: 'pk_test_key',
         baseUrl: 'https://public.heypocketai.com',
         apiVersion: 'v1',
+        retryTimes: 0,
         handler: $handlerStack
     );
 }
@@ -253,8 +254,152 @@ describe('RecordingsResource', function () {
         parse_str($request->getUri()->getQuery(), $query);
 
         expect($query['include_transcript'])->toBe('false')
-            ->and($query['include_summary'])->toBe('false')
-            ->and($query['include_action_items'])->toBe('false');
+            ->and($query['include_summarizations'])->toBe('false')
+            ->and($query)->not->toHaveKey('include_summary')
+            ->and($query)->not->toHaveKey('include_action_items');
+    });
+
+    it('uses the documented summarization query parameters', function () {
+        $history = [];
+        $client = createMockClient([
+            jsonResponse([
+                'success' => true,
+                'data' => [
+                    'id' => 'rec_123',
+                    'title' => 'Meeting Recording',
+                    'created_at' => '2025-01-15T10:30:00Z',
+                    'updated_at' => '2025-01-15T11:00:00Z',
+                ],
+            ]),
+        ], $history);
+
+        $resource = new RecordingsResource($client);
+        $resource->get('rec_123', summarizationId: 'sum_456');
+
+        parse_str($history[0]['request']->getUri()->getQuery(), $query);
+
+        expect($query['include_summarizations'])->toBe('true')
+            ->and($query['summarization_id'])->toBe('sum_456');
+    });
+
+    it('normalizes current recording detail responses', function () {
+        $client = createMockClient([
+            jsonResponse([
+                'success' => true,
+                'data' => [
+                    'id' => 'rec_123',
+                    'title' => 'Current API response',
+                    'duration' => null,
+                    'state' => 'completed',
+                    'created_at' => '2026-02-18T11:30:00Z',
+                    'updated_at' => '2026-02-18T12:00:05Z',
+                    'transcript' => [
+                        ['speaker' => 'Alice', 'text' => 'First sentence.', 'start' => 0, 'end' => 1],
+                        ['speaker' => 'Bob', 'text' => 'Second sentence.', 'start' => 1, 'end' => 2],
+                    ],
+                    'summarizations' => [
+                        'sum_456' => [
+                            'processingStatus' => 'completed',
+                            'v2' => [
+                                'summary' => [
+                                    'title' => 'Team Standup',
+                                    'emoji' => 'notes',
+                                    'markdown' => '## Key Decisions',
+                                    'bulletPoints' => ['Ship v2 by Friday'],
+                                ],
+                                'actionItems' => [
+                                    'actionItems' => [[
+                                        'id' => 'subtask_1',
+                                        'title' => 'Ship v2 by Friday',
+                                        'dueDate' => '2026-02-20',
+                                        'status' => 'TODO',
+                                        'isCompleted' => false,
+                                    ]],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
+
+        $recording = (new RecordingsResource($client))->get('rec_123');
+
+        expect($recording->transcript->text)->toBe('First sentence. Second sentence.')
+            ->and($recording->transcript->segments)->toHaveCount(2)
+            ->and($recording->summary->title)->toBe('Team Standup')
+            ->and($recording->summary->markdown)->toBe('## Key Decisions')
+            ->and($recording->summary->bulletPoints)->toBe(['Ship v2 by Friday'])
+            ->and($recording->actionItems)->toHaveCount(1)
+            ->and($recording->actionItems[0]->isPending())->toBeTrue()
+            ->and($recording->actionItems[0]->dueDate->format('Y-m-d'))->toBe('2026-02-20')
+            ->and($recording->formattedDuration())->toBe('0:00');
+    });
+
+    it('honors mixed summary and action item include flags', function (bool $includeSummary, bool $includeActionItems) {
+        $client = createMockClient([
+            jsonResponse([
+                'success' => true,
+                'data' => [
+                    'id' => 'rec_123',
+                    'title' => 'Mixed includes',
+                    'created_at' => '2026-02-18T11:30:00Z',
+                    'updated_at' => '2026-02-18T12:00:05Z',
+                    'summarizations' => [
+                        'sum_456' => [
+                            'processingStatus' => 'completed',
+                            'v2' => [
+                                'summary' => ['title' => 'Included summary'],
+                                'actionItems' => [
+                                    'actionItems' => [['id' => 'task_1', 'title' => 'Included task']],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
+
+        $recording = (new RecordingsResource($client))->get(
+            id: 'rec_123',
+            includeSummary: $includeSummary,
+            includeActionItems: $includeActionItems,
+        );
+
+        expect($recording->hasSummary())->toBe($includeSummary)
+            ->and($recording->hasActionItems())->toBe($includeActionItems);
+    })->with([
+        'summary only' => [true, false],
+        'action items only' => [false, true],
+    ]);
+
+    it('selects a requested summarization or the newest completed one', function () {
+        $data = [
+            'id' => 'rec_123',
+            'title' => 'Regenerated summary',
+            'created_at' => '2026-02-18T11:30:00Z',
+            'updated_at' => '2026-02-18T12:00:05Z',
+            'summarizations' => [
+                'sum_old' => [
+                    'processingStatus' => 'completed',
+                    'updatedAt' => '2026-02-18T12:00:00Z',
+                    'v2' => ['summary' => ['title' => 'Old summary']],
+                ],
+                'sum_new' => [
+                    'processingStatus' => 'completed',
+                    'updatedAt' => '2026-02-18T13:00:00Z',
+                    'v2' => ['summary' => ['title' => 'New summary']],
+                ],
+            ],
+        ];
+        $client = createMockClient([
+            jsonResponse(['success' => true, 'data' => $data]),
+            jsonResponse(['success' => true, 'data' => $data]),
+        ]);
+        $resource = new RecordingsResource($client);
+
+        expect($resource->get('rec_123')->summary->title)->toBe('New summary')
+            ->and($resource->get('rec_123', summarizationId: 'sum_old')->summary->title)->toBe('Old summary');
     });
 
     it('can filter recordings by folder', function () {

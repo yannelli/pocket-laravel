@@ -11,24 +11,35 @@ final readonly class Summary implements Arrayable, JsonSerializable
 {
     /**
      * @param  array<SummarySection>  $sections
+     * @param  array<string>  $bulletPoints
      */
     public function __construct(
         public string $title,
         public array $sections = [],
+        public ?string $markdown = null,
+        public array $bulletPoints = [],
+        public ?string $emoji = null,
     ) {}
 
     /**
      * Create a Summary instance from an array.
      *
-     * @param  array{title: string, sections?: array<array{heading: string, content: string}>}  $data
+     * @param  string|array{title?: string, sections?: array<array{heading: string, content: string}>, markdown?: string, summary?: string, bulletPoints?: array<string>, bullet_points?: array<string>, emoji?: string}  $data
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(string|array $data): self
     {
+        if (is_string($data)) {
+            return new self(title: '', markdown: $data);
+        }
+
         return new self(
-            title: $data['title'],
+            title: $data['title'] ?? '',
             sections: isset($data['sections'])
                 ? SummarySection::collection($data['sections'])
                 : [],
+            markdown: $data['markdown'] ?? $data['summary'] ?? null,
+            bulletPoints: $data['bulletPoints'] ?? $data['bullet_points'] ?? [],
+            emoji: $data['emoji'] ?? null,
         );
     }
 
@@ -51,20 +62,34 @@ final readonly class Summary implements Arrayable, JsonSerializable
     /**
      * Convert to array representation.
      *
-     * @return array{title: string, sections: array<array{heading: string, content: string}>}
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
-        return [
+        $data = [
             'title' => $this->title,
             'sections' => array_map(fn (SummarySection $s) => $s->toArray(), $this->sections),
         ];
+
+        if ($this->markdown !== null) {
+            $data['markdown'] = $this->markdown;
+        }
+
+        if ($this->bulletPoints !== []) {
+            $data['bulletPoints'] = $this->bulletPoints;
+        }
+
+        if ($this->emoji !== null) {
+            $data['emoji'] = $this->emoji;
+        }
+
+        return $data;
     }
 
     /**
      * Convert to JSON-serializable array.
      *
-     * @return array{title: string, sections: array<array{heading: string, content: string}>}
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {

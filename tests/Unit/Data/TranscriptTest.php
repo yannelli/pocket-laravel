@@ -59,3 +59,25 @@ it('can create a transcript segment', function () {
         ->and($segment->speaker)->toBe('Speaker 1')
         ->and($segment->duration())->toBe(5.5);
 });
+
+it('normalizes string and segment-list transcripts', function () {
+    $stringTranscript = Transcript::fromArray('Full transcript text');
+    $segmentTranscript = Transcript::fromArray([
+        ['start' => 0, 'end' => 1, 'text' => 'First'],
+        ['start' => 1, 'end' => 2, 'text' => 'Second'],
+    ]);
+
+    expect($stringTranscript->text)->toBe('Full transcript text')
+        ->and($stringTranscript->segments)->toBe([])
+        ->and($segmentTranscript->text)->toBe('First Second')
+        ->and($segmentTranscript->segments)->toHaveCount(2);
+});
+
+it('preserves zero text when reconstructing a transcript', function () {
+    $transcript = Transcript::fromArray([
+        ['start' => 0, 'end' => 1, 'text' => '0'],
+        ['start' => 1, 'end' => 2, 'text' => ''],
+    ]);
+
+    expect($transcript->text)->toBe('0');
+});
