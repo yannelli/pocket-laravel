@@ -2,6 +2,15 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## v1.3.0 - 2026-07-15
+
+### What's Changed
+
+* Set up agent dev environment by @yannelli in https://github.com/yannelli/pocket-laravel/pull/9
+* Fix Pocket API compatibility and expand test coverage by @yannelli in https://github.com/yannelli/pocket-laravel/pull/11
+
+**Full Changelog**: https://github.com/yannelli/pocket-laravel/compare/v1.2.0...v1.3.0
+
 ## v1.2.0 - 2026-03-19
 
 ### What's Changed
