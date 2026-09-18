@@ -27,16 +27,25 @@ final readonly class PaginatedUsers implements Arrayable, Countable, IteratorAgg
     ) {}
 
     /**
-     * @param  array{data?: array<int, array<string, mixed>>, pagination: array{page: int|string, limit: int|string, total: int|string, total_pages: int|string, has_more: bool}}  $response
+     * @param  array<string, mixed>  $response
      *
      * @throws Exception
      */
     public static function fromArray(array $response): self
     {
         $items = $response['data'] ?? [];
+        $users = [];
+
+        if (is_array($items)) {
+            foreach ($items as $item) {
+                if (is_array($item)) {
+                    $users[] = OrganizationUser::fromArray($item);
+                }
+            }
+        }
 
         return new self(
-            data: OrganizationUser::collection(is_array($items) ? $items : []),
+            data: $users,
             pagination: Pagination::fromArray($response['pagination']),
         );
     }
