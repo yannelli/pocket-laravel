@@ -2,9 +2,18 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## v1.4.0 - 2026-09-18
+
+### What's Changed
+
+* Align SDK with Pocket's current public API by @yannelli in https://github.com/yannelli/pocket-laravel/pull/15
+
+**Full Changelog**: https://github.com/yannelli/pocket-laravel/compare/v1.3.0...v1.4.0
+
 ## Unreleased
 
 ### Added
+
 - Semantic search via `POST /public/search`
 - Recording upload URLs via `POST /public/recordings/upload-url`, plus a helper that PUTs a local file
 - Organization user listing and settings via `/public/users`
@@ -14,6 +23,7 @@ All notable changes to `:package_name` will be documented in this file.
 - `ForbiddenException` for HTTP 403 responses
 
 ### Changed
+
 - Folders are treated as a current public API resource rather than a legacy endpoint
 
 ## v1.3.0 - 2026-07-15
