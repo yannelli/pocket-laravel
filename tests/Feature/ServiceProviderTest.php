@@ -2,6 +2,10 @@
 
 use Yannelli\Pocket\Facades\Pocket;
 use Yannelli\Pocket\Pocket as PocketClass;
+use Yannelli\Pocket\Resources\FoldersResource;
+use Yannelli\Pocket\Resources\RecordingsResource;
+use Yannelli\Pocket\Resources\SearchResource;
+use Yannelli\Pocket\Resources\TagsResource;
 
 it('registers the pocket service', function () {
     expect(app()->bound(PocketClass::class))->toBeTrue();
@@ -18,13 +22,17 @@ it('can use the facade', function () {
 });
 
 it('can access recordings via facade', function () {
-    expect(Pocket::recordings())->toBeInstanceOf(\Yannelli\Pocket\Resources\RecordingsResource::class);
+    expect(Pocket::recordings())->toBeInstanceOf(RecordingsResource::class);
 });
 
 it('can access folders via facade', function () {
-    expect(Pocket::folders())->toBeInstanceOf(\Yannelli\Pocket\Resources\FoldersResource::class);
+    expect(Pocket::folders())->toBeInstanceOf(FoldersResource::class);
 });
 
 it('can access tags via facade', function () {
-    expect(Pocket::tags())->toBeInstanceOf(\Yannelli\Pocket\Resources\TagsResource::class);
+    expect(Pocket::tags())->toBeInstanceOf(TagsResource::class);
+});
+
+it('can access search via facade', function () {
+    expect(Pocket::search())->toBeInstanceOf(SearchResource::class);
 });

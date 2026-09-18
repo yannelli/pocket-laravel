@@ -20,6 +20,8 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
         public ActionItemStatus $status = ActionItemStatus::Pending,
         public ActionItemPriority $priority = ActionItemPriority::Medium,
         public ?DateTimeImmutable $dueDate = null,
+        public ?string $parentTaskId = null,
+        public ?string $globalActionItemId = null,
     ) {}
 
     /**
@@ -51,6 +53,8 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
             status: ActionItemStatus::tryFrom($status) ?? ActionItemStatus::Pending,
             priority: ActionItemPriority::tryFrom(strtolower((string) ($data['priority'] ?? 'medium'))) ?? ActionItemPriority::Medium,
             dueDate: $dueDate !== null ? new DateTimeImmutable($dueDate) : null,
+            parentTaskId: $data['parentTaskId'] ?? $data['parent_task_id'] ?? null,
+            globalActionItemId: $data['globalActionItemId'] ?? $data['global_action_item_id'] ?? null,
         );
     }
 
@@ -109,6 +113,8 @@ final readonly class ActionItem implements Arrayable, JsonSerializable
             'status' => $this->status->value,
             'priority' => $this->priority->value,
             'due_date' => $this->dueDate?->format('Y-m-d'),
+            'parent_task_id' => $this->parentTaskId,
+            'global_action_item_id' => $this->globalActionItemId,
         ], fn ($value) => $value !== null);
     }
 

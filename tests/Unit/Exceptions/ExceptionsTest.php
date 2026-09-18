@@ -1,6 +1,7 @@
 <?php
 
 use Yannelli\Pocket\Exceptions\AuthenticationException;
+use Yannelli\Pocket\Exceptions\ForbiddenException;
 use Yannelli\Pocket\Exceptions\NotFoundException;
 use Yannelli\Pocket\Exceptions\PocketException;
 use Yannelli\Pocket\Exceptions\RateLimitException;
@@ -31,6 +32,13 @@ it('can create authentication exception', function () {
 
     expect($exception->getMessage())->toBe('Invalid API key')
         ->and($exception->getCode())->toBe(401);
+});
+
+it('can create forbidden exception', function () {
+    $exception = new ForbiddenException('INSUFFICIENT_SCOPES');
+
+    expect($exception->getMessage())->toBe('INSUFFICIENT_SCOPES')
+        ->and($exception->getCode())->toBe(403);
 });
 
 it('can create not found exception', function () {

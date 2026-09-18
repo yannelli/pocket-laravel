@@ -17,6 +17,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use Yannelli\Pocket\Exceptions\AuthenticationException;
+use Yannelli\Pocket\Exceptions\ForbiddenException;
 use Yannelli\Pocket\Exceptions\NotFoundException;
 use Yannelli\Pocket\Exceptions\PocketException;
 use Yannelli\Pocket\Exceptions\RateLimitException;
@@ -189,6 +190,60 @@ class PocketClient
     }
 
     /**
+     * Make a POST request to the API.
+     *
+     * @param  string  $endpoint  The API endpoint to request
+     * @param  array<string, mixed>  $body  JSON request body
+     * @param  array<string, mixed>  $query  Query parameters to include
+     * @return array<string, mixed>
+     *
+     * @throws PocketException
+     */
+    public function post(string $endpoint, array $body = [], array $query = []): array
+    {
+        return $this->sendJson('POST', $endpoint, $body, $query);
+    }
+
+    /**
+     * Make a PATCH request to the API.
+     *
+     * @param  string  $endpoint  The API endpoint to request
+     * @param  array<string, mixed>  $body  JSON request body
+     * @param  array<string, mixed>  $query  Query parameters to include
+     * @return array<string, mixed>
+     *
+     * @throws PocketException
+     */
+    public function patch(string $endpoint, array $body = [], array $query = []): array
+    {
+        return $this->sendJson('PATCH', $endpoint, $body, $query);
+    }
+
+    /**
+     * Make a JSON request to the API.
+     *
+     * @param  array<string, mixed>  $body
+     * @param  array<string, mixed>  $query
+     * @return array<string, mixed>
+     *
+     * @throws PocketException
+     */
+    protected function sendJson(string $method, string $endpoint, array $body = [], array $query = []): array
+    {
+        $options = [
+            'json' => $body === [] ? new \stdClass : $body,
+        ];
+
+        $filteredQuery = array_filter($query, static fn (mixed $value): bool => $value !== null);
+
+        if ($filteredQuery !== []) {
+            $options['query'] = $filteredQuery;
+        }
+
+        return $this->request($method, $endpoint, $options);
+    }
+
+    /**
      * Make a request to the API.
      *
      * @param  string  $method  The HTTP method (GET, POST, etc.)
@@ -268,6 +323,7 @@ class PocketClient
 
         match ($statusCode) {
             401 => throw new AuthenticationException($body['error'] ?? 'Invalid API key'),
+            403 => throw new ForbiddenException($body['error'] ?? 'Forbidden'),
             404 => throw new NotFoundException($body['error'] ?? 'Resource not found'),
             429 => throw new RateLimitException(
                 $body['error'] ?? 'Rate limit exceeded',

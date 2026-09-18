@@ -5,7 +5,10 @@ use Yannelli\Pocket\PocketClient;
 use Yannelli\Pocket\Resources\AudioResource;
 use Yannelli\Pocket\Resources\FoldersResource;
 use Yannelli\Pocket\Resources\RecordingsResource;
+use Yannelli\Pocket\Resources\SearchResource;
 use Yannelli\Pocket\Resources\TagsResource;
+use Yannelli\Pocket\Resources\UsersResource;
+use Yannelli\Pocket\Resources\WebhooksResource;
 
 it('can create a pocket instance', function () {
     $pocket = new Pocket('pk_test_key');
@@ -51,6 +54,14 @@ it('can access audio resource', function () {
     $pocket = new Pocket('pk_test_key');
 
     expect($pocket->audio())->toBeInstanceOf(AudioResource::class);
+});
+
+it('can access search, users, and webhooks resources', function () {
+    $pocket = new Pocket('pk_test_key');
+
+    expect($pocket->search())->toBeInstanceOf(SearchResource::class)
+        ->and($pocket->users())->toBeInstanceOf(UsersResource::class)
+        ->and($pocket->webhooks())->toBeInstanceOf(WebhooksResource::class);
 });
 
 it('returns same resource instance on multiple calls', function () {

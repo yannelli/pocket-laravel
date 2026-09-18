@@ -30,7 +30,7 @@ class FoldersResource
     {
         $response = $this->client->get('folders');
 
-        return Folder::collection($response['data']);
+        return Folder::collection(is_array($response['data'] ?? null) ? $response['data'] : []);
     }
 
     /**
@@ -56,7 +56,7 @@ class FoldersResource
     {
         $folders = $this->list();
 
-        foreach ($folders as $folder) {
+        foreach ($this->flatten($folders) as $folder) {
             if ($folder->id === $id) {
                 return $folder;
             }
@@ -76,7 +76,7 @@ class FoldersResource
     {
         $folders = $this->list();
 
-        foreach ($folders as $folder) {
+        foreach ($this->flatten($folders) as $folder) {
             if ($folder->name === $name) {
                 return $folder;
             }
@@ -95,12 +95,29 @@ class FoldersResource
     {
         $folders = $this->list();
 
-        foreach ($folders as $folder) {
+        foreach ($this->flatten($folders) as $folder) {
             if ($folder->isDefault) {
                 return $folder;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Flatten a folder tree into a single list.
+     *
+     * @param  array<int, Folder>  $folders
+     * @return array<int, Folder>
+     */
+    public function flatten(array $folders): array
+    {
+        $flat = [];
+
+        foreach ($folders as $folder) {
+            $flat = array_merge($flat, $folder->flatten());
+        }
+
+        return $flat;
     }
 }

@@ -6,7 +6,9 @@ namespace Yannelli\Pocket\Tests\Helpers;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
 use Yannelli\Pocket\Pocket;
 use Yannelli\Pocket\PocketClient;
 
@@ -27,7 +29,7 @@ trait MocksHttpResponses
         $handlerStack = HandlerStack::create($this->mockHandler);
 
         // Add history middleware to track requests
-        $handlerStack->push(\GuzzleHttp\Middleware::history($this->requestHistory));
+        $handlerStack->push(Middleware::history($this->requestHistory));
 
         $client = new PocketClient(
             apiKey: 'pk_test_key',
@@ -60,7 +62,7 @@ trait MocksHttpResponses
         $handlerStack = HandlerStack::create($this->mockHandler);
 
         // Add history middleware to track requests
-        $handlerStack->push(\GuzzleHttp\Middleware::history($this->requestHistory));
+        $handlerStack->push(Middleware::history($this->requestHistory));
 
         return new PocketClient(
             apiKey: 'pk_test_key',
@@ -88,7 +90,7 @@ trait MocksHttpResponses
     /**
      * Get the last request that was made.
      */
-    protected function getLastRequest(): ?\Psr\Http\Message\RequestInterface
+    protected function getLastRequest(): ?RequestInterface
     {
         $last = end($this->requestHistory);
 

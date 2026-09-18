@@ -15,6 +15,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
     /**
      * @param  array<int, Tag>  $tags
      * @param  array<int, ActionItem>  $actionItems
+     * @param  array<int, string>  $summarizationsErrors
      */
     public function __construct(
         public string $id,
@@ -29,6 +30,12 @@ final readonly class Recording implements Arrayable, JsonSerializable
         public ?Transcript $transcript = null,
         public ?Summary $summary = null,
         public ?array $actionItems = [],
+        public ?RecordedBy $recordedBy = null,
+        public ?DateTimeImmutable $recordingAt = null,
+        public ?string $transcriptError = null,
+        public ?Translation $translation = null,
+        public ?string $translationError = null,
+        public array $summarizationsErrors = [],
     ) {}
 
     /**
@@ -45,7 +52,7 @@ final readonly class Recording implements Arrayable, JsonSerializable
         ?string $summarizationId = null,
     ): self {
         $duration = $data['duration'] ?? null;
-        $summarizations = $data['summarizations'] ?? [];
+        $summarizations = is_array($data['summarizations'] ?? null) ? $data['summarizations'] : [];
         $selectedSummarization = null;
         $selectedUpdatedAt = '';
 
@@ -82,20 +89,36 @@ final readonly class Recording implements Arrayable, JsonSerializable
                 ?? [])
             : [];
         $transcript = $data['transcript'] ?? $data['raw_transcript'] ?? null;
+        $recordedBy = $data['recorded_by'] ?? null;
+        $recordingAt = $data['recording_at'] ?? null;
+        $translation = $data['translation'] ?? null;
+        $summarizationsErrors = $data['summarizations_errors'] ?? [];
+
+        if (! is_array($actionItems)) {
+            $actionItems = [];
+        }
 
         return new self(
             id: $data['id'],
-            title: $data['title'],
+            title: $data['title'] ?? '',
             folderId: $data['folder_id'] ?? null,
             duration: $duration,
             state: RecordingState::tryFrom($data['state'] ?? 'unknown') ?? RecordingState::Unknown,
             language: $data['language'] ?? null,
             createdAt: new DateTimeImmutable($data['created_at']),
             updatedAt: new DateTimeImmutable($data['updated_at']),
-            tags: isset($data['tags']) ? Tag::collection($data['tags']) : [],
+            tags: isset($data['tags']) && is_array($data['tags']) ? Tag::collection($data['tags']) : [],
             transcript: $transcript !== null ? Transcript::fromArray($transcript) : null,
             summary: $summary !== null ? Summary::fromArray($summary) : null,
             actionItems: ActionItem::collection($actionItems),
+            recordedBy: is_array($recordedBy) ? RecordedBy::fromArray($recordedBy) : null,
+            recordingAt: $recordingAt !== null ? new DateTimeImmutable((string) $recordingAt) : null,
+            transcriptError: $data['transcript_error'] ?? null,
+            translation: is_array($translation) ? Translation::fromArray($translation) : null,
+            translationError: $data['translation_error'] ?? null,
+            summarizationsErrors: is_array($summarizationsErrors)
+                ? array_values(array_map(static fn (mixed $error): string => (string) $error, $summarizationsErrors))
+                : [],
         );
     }
 
@@ -256,8 +279,20 @@ final readonly class Recording implements Arrayable, JsonSerializable
             'tags' => array_map(fn (Tag $t) => $t->toArray(), $this->tags),
         ];
 
+        if ($this->recordedBy !== null) {
+            $data['recorded_by'] = $this->recordedBy->toArray();
+        }
+
+        if ($this->recordingAt !== null) {
+            $data['recording_at'] = $this->recordingAt->format('c');
+        }
+
         if ($this->transcript !== null) {
             $data['transcript'] = $this->transcript->toArray();
+        }
+
+        if ($this->transcriptError !== null) {
+            $data['transcript_error'] = $this->transcriptError;
         }
 
         if ($this->summary !== null) {
@@ -266,6 +301,18 @@ final readonly class Recording implements Arrayable, JsonSerializable
 
         if (count($this->actionItems) > 0) {
             $data['action_items'] = array_map(fn (ActionItem $i) => $i->toArray(), $this->actionItems);
+        }
+
+        if ($this->translation !== null) {
+            $data['translation'] = $this->translation->toArray();
+        }
+
+        if ($this->translationError !== null) {
+            $data['translation_error'] = $this->translationError;
+        }
+
+        if ($this->summarizationsErrors !== []) {
+            $data['summarizations_errors'] = $this->summarizationsErrors;
         }
 
         return $data;

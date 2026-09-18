@@ -1,6 +1,6 @@
 {
     "name": "yannelli/pocket-laravel",
-    "description": "Laravel SDK for the Pocket API - Access recordings, transcripts, summaries, and more",
+    "description": "Laravel SDK for the Pocket API - Access recordings, transcripts, summaries, search, and more",
     "keywords": [
         "pocket",
         "laravel",
