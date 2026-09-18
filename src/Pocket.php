@@ -7,7 +7,10 @@ namespace Yannelli\Pocket;
 use Yannelli\Pocket\Resources\AudioResource;
 use Yannelli\Pocket\Resources\FoldersResource;
 use Yannelli\Pocket\Resources\RecordingsResource;
+use Yannelli\Pocket\Resources\SearchResource;
 use Yannelli\Pocket\Resources\TagsResource;
+use Yannelli\Pocket\Resources\UsersResource;
+use Yannelli\Pocket\Resources\WebhooksResource;
 
 class Pocket
 {
@@ -20,6 +23,12 @@ class Pocket
     protected ?TagsResource $tags = null;
 
     protected ?AudioResource $audio = null;
+
+    protected ?SearchResource $search = null;
+
+    protected ?UsersResource $users = null;
+
+    protected ?WebhooksResource $webhooks = null;
 
     /**
      * Configuration values for creating new instances.
@@ -155,6 +164,42 @@ class Pocket
         }
 
         return $this->audio;
+    }
+
+    /**
+     * Access the search resource.
+     */
+    public function search(): SearchResource
+    {
+        if ($this->search === null) {
+            $this->search = new SearchResource($this->client);
+        }
+
+        return $this->search;
+    }
+
+    /**
+     * Access the organization users resource.
+     */
+    public function users(): UsersResource
+    {
+        if ($this->users === null) {
+            $this->users = new UsersResource($this->client);
+        }
+
+        return $this->users;
+    }
+
+    /**
+     * Access webhook signature verification and payload parsing.
+     */
+    public function webhooks(): WebhooksResource
+    {
+        if ($this->webhooks === null) {
+            $this->webhooks = new WebhooksResource;
+        }
+
+        return $this->webhooks;
     }
 
     /**

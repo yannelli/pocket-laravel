@@ -212,4 +212,51 @@ describe('FoldersResource', function () {
 
         expect($folder)->toBeNull();
     });
+
+    it('parses nested folder hierarchies from the current API', function () {
+        $payload = [
+            'success' => true,
+            'data' => [[
+                'id' => 'space_1',
+                'name' => 'Work',
+                'kind' => 'space',
+                'color' => '#111111',
+                'parent_folder_id' => null,
+                'space_id' => 'space_1',
+                'recording_count' => 1,
+                'total_recording_count' => 3,
+                'created_at' => '2026-01-01T00:00:00Z',
+                'updated_at' => '2026-01-10T00:00:00Z',
+                'children' => [[
+                    'id' => 'folder_nested',
+                    'name' => 'Standups',
+                    'kind' => 'folder',
+                    'parent_folder_id' => 'space_1',
+                    'space_id' => 'space_1',
+                    'recording_count' => 2,
+                    'total_recording_count' => 2,
+                    'created_at' => '2026-01-02T00:00:00Z',
+                    'updated_at' => '2026-01-02T00:00:00Z',
+                    'children' => [],
+                ]],
+            ]],
+        ];
+        $history = [];
+        $client = createFoldersMockClient([
+            foldersJsonResponse($payload),
+            foldersJsonResponse($payload),
+            foldersJsonResponse($payload),
+        ], $history);
+
+        $resource = new FoldersResource($client);
+        $folders = $resource->list();
+
+        expect($folders)->toHaveCount(1)
+            ->and($folders[0]->kind)->toBe('space')
+            ->and($folders[0]->totalRecordingCount)->toBe(3)
+            ->and($folders[0]->children)->toHaveCount(1)
+            ->and($resource->find('folder_nested')?->name)->toBe('Standups')
+            ->and($resource->findByName('Standups')?->id)->toBe('folder_nested')
+            ->and($resource->flatten($folders))->toHaveCount(2);
+    });
 });

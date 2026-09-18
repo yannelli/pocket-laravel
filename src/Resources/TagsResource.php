@@ -28,7 +28,7 @@ class TagsResource
     {
         $response = $this->client->get('tags');
 
-        return Tag::collection($response['data']);
+        return Tag::collection(is_array($response['data'] ?? null) ? $response['data'] : []);
     }
 
     /**

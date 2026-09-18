@@ -5,6 +5,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Yannelli\Pocket\Exceptions\AuthenticationException;
+use Yannelli\Pocket\Exceptions\ForbiddenException;
 use Yannelli\Pocket\Exceptions\NotFoundException;
 use Yannelli\Pocket\Exceptions\PocketException;
 use Yannelli\Pocket\Exceptions\RateLimitException;
@@ -50,6 +51,18 @@ describe('Error Handling', function () {
 
         expect(fn () => $resource->list())
             ->toThrow(AuthenticationException::class, 'Invalid API key');
+    });
+
+    it('throws ForbiddenException on 403', function () {
+        $client = createErrorMockClient([
+            errorJsonResponse([
+                'success' => false,
+                'error' => 'USER_KEY_NOT_ALLOWED',
+            ], 403),
+        ]);
+
+        expect(fn () => $client->get('users'))
+            ->toThrow(ForbiddenException::class, 'USER_KEY_NOT_ALLOWED');
     });
 
     it('throws NotFoundException on 404', function () {

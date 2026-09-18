@@ -97,11 +97,15 @@ it('normalizes current API action item fields', function () {
         'status' => 'TODO',
         'dueDate' => '2030-01-01',
         'isCompleted' => true,
+        'parentTaskId' => 'task_1',
+        'globalActionItemId' => 'gai_001',
     ]);
 
     expect($actionItem->title)->toBe('Current API task')
         ->and($actionItem->isCompleted())->toBeTrue()
-        ->and($actionItem->dueDate->format('Y-m-d'))->toBe('2030-01-01');
+        ->and($actionItem->dueDate->format('Y-m-d'))->toBe('2030-01-01')
+        ->and($actionItem->parentTaskId)->toBe('task_1')
+        ->and($actionItem->globalActionItemId)->toBe('gai_001');
 });
 
 it('serializes action items and labels their enums', function () {

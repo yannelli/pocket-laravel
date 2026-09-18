@@ -16,16 +16,20 @@
     - [Filtering Recordings](#filtering-recordings)
     - [Iterating All Recordings](#iterating-all-recordings)
     - [Recording Details](#recording-details)
+    - [Uploading Recordings](#uploading-recordings)
     - [Transcripts](#transcripts)
     - [Summaries](#summaries)
     - [Action Items](#action-items)
     - [Recording States](#recording-states)
+- [Search](#search)
 - [Folders](#folders)
 - [Tags](#tags)
 - [Audio](#audio)
     - [Retrieving Audio URLs](#retrieving-audio-urls)
     - [Downloading Audio](#downloading-audio)
     - [Scoped Audio Resource](#scoped-audio-resource)
+- [Users](#users)
+- [Webhooks](#webhooks)
 - [Error Handling](#error-handling)
 - [Configuration Reference](#configuration-reference)
 - [Testing](#testing)
@@ -34,7 +38,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Pocket Laravel SDK provides an expressive, fluent interface for interacting with the [Pocket API](https://docs.heypocketai.com/docs/api). Using this SDK, you may easily access your recordings, transcripts, summaries, and action items from within your Laravel application.
+Pocket Laravel SDK provides an expressive, fluent interface for interacting with the [Pocket API](https://docs.heypocketai.com/docs/api). Using this SDK, you may easily access your recordings, transcripts, summaries, search, tags, folders, and action items from within your Laravel application.
 
 The SDK handles authentication, request building, pagination, retry logic with exponential backoff, and exception mapping—allowing you to focus on building your application rather than managing HTTP requests.
 
@@ -95,6 +99,9 @@ $recordings = Pocket::recordings()->list();
 
 // Get a specific recording
 $recording = Pocket::recordings()->get('rec_123');
+
+// Search transcripts, summaries, and action items
+$results = Pocket::search()->query('ship v2 by Friday');
 
 // List folders
 $folders = Pocket::folders()->list();
@@ -267,6 +274,32 @@ $recording = Pocket::recordings()->get(
     includeActionItems: true,
     summarizationId: 'sum_123'
 );
+
+echo $recording->recordedBy?->displayName;
+echo $recording->recordingAt?->format('Y-m-d');
+echo $recording->translation?->toLanguage;
+```
+
+<a name="uploading-recordings"></a>
+### Uploading Recordings
+
+User API keys with the `recordings:write` scope may create a pre-signed upload URL and PUT audio to it. Organization API keys are not allowed for this endpoint.
+
+```php
+$upload = Pocket::recordings()->createUploadUrl(
+    contentType: 'audio/mpeg',
+    fileName: 'standup.mp3',
+    duration: 1800,
+    title: 'Team Standup'
+);
+
+// Or create the URL and upload a local file in one call:
+$upload = Pocket::recordings()->upload(
+    path: storage_path('app/standup.mp3'),
+    title: 'Team Standup'
+);
+
+$recording = Pocket::recordings()->get($upload->recordingId);
 ```
 
 <a name="transcripts"></a>
@@ -350,13 +383,35 @@ if ($recording->isFailed()) {
 
 The available recording states are: `pending`, `transcribing`, `failed`, `transcribed`, `summarizing`, `summarization_failed`, `completed`, and `unknown`.
 
+<a name="search"></a>
+## Search
+
+Semantic search finds relevant content across transcripts, summaries, and action items:
+
+```php
+use Yannelli\Pocket\Facades\Pocket;
+
+$results = Pocket::search()->query(
+    query: 'ship v2 by Friday',
+    limit: 8,
+    dateFrom: '2026-01-01T00:00:00Z',
+    dateTo: '2026-01-31T23:59:59Z',
+    folderIds: ['folder_123'],
+    recordingIds: ['rec_123']
+);
+
+foreach ($results as $hit) {
+    echo $hit->title;
+    echo $hit->snippet;
+}
+```
+
+Limit is capped at 20, matching the public API.
+
 <a name="folders"></a>
 ## Folders
 
-The folders resource allows you to list and retrieve folders:
-
-> [!NOTE]
-> Folders are not listed in Pocket's current public API reference. This legacy resource remains available for compatibility with Pocket deployments that still expose the `/public/folders` endpoint.
+The folders resource returns the authenticated user's folder hierarchy, including nested children, recording counts, and spaces:
 
 ```php
 use Yannelli\Pocket\Facades\Pocket;
@@ -364,13 +419,18 @@ use Yannelli\Pocket\Facades\Pocket;
 // List all folders
 $folders = Pocket::folders()->list();
 
-// Find a folder by ID
+foreach ($folders as $folder) {
+    echo $folder->name;
+    echo $folder->recordingCount;
+}
+
+// Find a folder by ID, including nested children
 $folder = Pocket::folders()->find('folder_123');
 
 // Find a folder by name
 $folder = Pocket::folders()->findByName('Work Meetings');
 
-// Get the default folder
+// Get the default folder when the API marks one with is_default
 $defaultFolder = Pocket::folders()->default();
 ```
 
@@ -473,6 +533,49 @@ $contents = $audio->getContents();
 $tempPath = $audio->download();
 ```
 
+<a name="users"></a>
+## Users
+
+Organization API keys with the `users:read` / `users:write` scopes can list members and administer settings. Personal user API keys are rejected on these routes.
+
+```php
+use Yannelli\Pocket\Facades\Pocket;
+
+$users = Pocket::users()->list(q: 'alice');
+
+$bundle = Pocket::users()->settings('usr_001', include: ['profile', 'preferences', 'tags']);
+
+$update = Pocket::users()->updateSettings('usr_001', [
+    'settings' => [
+        'selected_theme' => 'executive_summary',
+    ],
+]);
+```
+
+<a name="webhooks"></a>
+## Webhooks
+
+Personal webhooks are configured in the Pocket app. The SDK verifies HMAC-SHA256 signatures from the `X-HeyPocket-Signature` and `X-HeyPocket-Timestamp` headers:
+
+```php
+use Yannelli\Pocket\Facades\Pocket;
+use Illuminate\Http\Request;
+
+public function handle(Request $request)
+{
+    $event = Pocket::webhooks()->parseAndVerify(
+        secret: config('services.pocket.webhook_secret'),
+        payload: $request->getContent(),
+        signature: $request->header('X-HeyPocket-Signature'),
+        timestamp: $request->header('X-HeyPocket-Timestamp'),
+    );
+
+    // $event->event, $event->recordingId(), $event->user, ...
+}
+```
+
+Organization-prefixed admin APIs (`/api/v1/organization/:orgId/...` for templates, API keys, analytics, and org webhooks) are documented by Pocket but are not wrapped by this SDK yet. The public `/public/users` aliases above cover org member administration.
+
 <a name="error-handling"></a>
 ## Error Handling
 
@@ -481,6 +584,7 @@ The SDK throws specific exceptions based on the HTTP response status code. You m
 ```php
 use Yannelli\Pocket\Facades\Pocket;
 use Yannelli\Pocket\Exceptions\AuthenticationException;
+use Yannelli\Pocket\Exceptions\ForbiddenException;
 use Yannelli\Pocket\Exceptions\NotFoundException;
 use Yannelli\Pocket\Exceptions\RateLimitException;
 use Yannelli\Pocket\Exceptions\ValidationException;
@@ -491,6 +595,8 @@ try {
     $recording = Pocket::recordings()->get('rec_123');
 } catch (AuthenticationException $e) {
     // Invalid API key (401)
+} catch (ForbiddenException $e) {
+    // Missing scope or organization key mismatch (403)
 } catch (NotFoundException $e) {
     // Recording not found (404)
 } catch (RateLimitException $e) {

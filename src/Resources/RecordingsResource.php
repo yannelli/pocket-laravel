@@ -7,8 +7,11 @@ namespace Yannelli\Pocket\Resources;
 use DateTimeInterface;
 use Exception;
 use Generator;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Yannelli\Pocket\Data\PaginatedRecordings;
 use Yannelli\Pocket\Data\Recording;
+use Yannelli\Pocket\Data\UploadUrl;
 use Yannelli\Pocket\Exceptions\PocketException;
 use Yannelli\Pocket\PocketClient;
 
@@ -191,6 +194,95 @@ class RecordingsResource
     }
 
     /**
+     * Generate a pre-signed S3 URL for uploading a new recording.
+     *
+     * User API keys require the `recordings:write` scope. Organization API keys
+     * are not allowed for this endpoint.
+     *
+     * @throws PocketException
+     * @throws Exception
+     */
+    public function createUploadUrl(
+        ?string $contentType = null,
+        ?string $fileName = null,
+        int|float|null $duration = null,
+        DateTimeInterface|string|null $recordingAt = null,
+        ?string $title = null,
+    ): UploadUrl {
+        $body = array_filter([
+            'content_type' => $contentType,
+            'file_name' => $fileName,
+            'duration' => $duration,
+            'recording_at' => $this->formatDateTime($recordingAt),
+            'title' => $title,
+        ], static fn (mixed $value): bool => $value !== null);
+
+        $response = $this->client->post('recordings/upload-url', $body);
+
+        /** @var array<string, mixed> $data */
+        $data = is_array($response['data'] ?? null) ? $response['data'] : $response;
+
+        return UploadUrl::fromArray($data);
+    }
+
+    /**
+     * Create an upload URL and PUT a local file to the signed URL.
+     *
+     * @throws PocketException
+     * @throws GuzzleException
+     * @throws Exception
+     */
+    public function upload(
+        string $path,
+        ?string $title = null,
+        ?string $contentType = null,
+        ?string $fileName = null,
+        int|float|null $duration = null,
+        DateTimeInterface|string|null $recordingAt = null,
+    ): UploadUrl {
+        if (! is_readable($path) || is_dir($path)) {
+            throw new PocketException('Cannot read recording file: '.$path);
+        }
+
+        $fileName ??= basename($path);
+        $contentType ??= mime_content_type($path) ?: 'application/octet-stream';
+
+        $upload = $this->createUploadUrl(
+            contentType: $contentType,
+            fileName: $fileName,
+            duration: $duration,
+            recordingAt: $recordingAt,
+            title: $title,
+        );
+
+        if ($upload->signedUrl === null) {
+            throw new PocketException('Upload URL response did not include a signed URL');
+        }
+
+        $headers = $upload->headers;
+        $headers['Content-Type'] ??= $contentType;
+
+        $handle = fopen($path, 'rb');
+
+        if ($handle === false) {
+            throw new PocketException('Cannot open recording file: '.$path);
+        }
+
+        try {
+            (new Client(['timeout' => 300]))->put($upload->signedUrl, [
+                'body' => $handle,
+                'headers' => $headers,
+            ]);
+        } finally {
+            if (is_resource($handle)) {
+                fclose($handle);
+            }
+        }
+
+        return $upload;
+    }
+
+    /**
      * Format a date for the API query.
      *
      * @param  DateTimeInterface|string|null  $date  The date to format
@@ -203,6 +295,22 @@ class RecordingsResource
 
         if ($date instanceof DateTimeInterface) {
             return $date->format('Y-m-d');
+        }
+
+        return $date;
+    }
+
+    /**
+     * Format a date-time for upload metadata.
+     */
+    protected function formatDateTime(DateTimeInterface|string|null $date): ?string
+    {
+        if ($date === null) {
+            return null;
+        }
+
+        if ($date instanceof DateTimeInterface) {
+            return $date->format('c');
         }
 
         return $date;

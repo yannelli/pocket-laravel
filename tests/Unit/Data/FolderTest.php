@@ -53,6 +53,35 @@ it('can create a collection of folders', function () {
         ->and($folders[1])->toBeInstanceOf(Folder::class);
 });
 
+it('parses current folder hierarchy fields without is_default', function () {
+    $folder = Folder::fromArray([
+        'id' => 'space_1',
+        'name' => 'Work',
+        'kind' => 'space',
+        'color' => '#abcdef',
+        'parent_folder_id' => null,
+        'space_id' => 'space_1',
+        'recording_count' => 2,
+        'total_recording_count' => 5,
+        'created_at' => '2026-01-01T00:00:00Z',
+        'updated_at' => '2026-01-02T00:00:00Z',
+        'children' => [[
+            'id' => 'folder_child',
+            'name' => 'Child',
+            'kind' => 'folder',
+            'parent_folder_id' => 'space_1',
+            'created_at' => '2026-01-01T00:00:00Z',
+            'updated_at' => '2026-01-01T00:00:00Z',
+        ]],
+    ]);
+
+    expect($folder->isDefault)->toBeFalse()
+        ->and($folder->kind)->toBe('space')
+        ->and($folder->recordingCount)->toBe(2)
+        ->and($folder->children[0]->id)->toBe('folder_child')
+        ->and($folder->flatten())->toHaveCount(2);
+});
+
 it('can convert folder to array', function () {
     $folder = Folder::fromArray([
         'id' => 'folder_123',

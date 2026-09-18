@@ -59,6 +59,33 @@ describe('PocketClient', function () {
         ]);
     });
 
+    it('sends JSON bodies on POST requests', function () {
+        $history = [];
+        $client = createMockPocketClient([
+            successJsonResponse(['success' => true, 'data' => []]),
+        ], $history);
+
+        $client->post('search', ['query' => 'budget', 'limit' => 8]);
+
+        $request = $history[0]['request'];
+        $body = json_decode((string) $request->getBody(), true);
+
+        expect($request->getMethod())->toBe('POST')
+            ->and($request->getUri()->getPath())->toBe('/api/v1/public/search')
+            ->and($body)->toBe(['query' => 'budget', 'limit' => 8]);
+    });
+
+    it('encodes empty JSON bodies as objects', function () {
+        $history = [];
+        $client = createMockPocketClient([
+            successJsonResponse(['success' => true, 'data' => []]),
+        ], $history);
+
+        $client->post('recordings/upload-url');
+
+        expect((string) $history[0]['request']->getBody())->toBe('{}');
+    });
+
     it('retries transient server errors with a custom handler stack', function () {
         $client = createMockPocketClient([
             new Response(500, [], 'Internal Server Error'),

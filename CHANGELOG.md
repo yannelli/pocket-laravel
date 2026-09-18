@@ -2,6 +2,20 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## Unreleased
+
+### Added
+- Semantic search via `POST /public/search`
+- Recording upload URLs via `POST /public/recordings/upload-url`, plus a helper that PUTs a local file
+- Organization user listing and settings via `/public/users`
+- Webhook HMAC-SHA256 verification (`X-HeyPocket-Signature` / `X-HeyPocket-Timestamp`)
+- Recording fields from the current spec: `recorded_by`, `recording_at`, translation, and summarization errors
+- Nested folder/space hierarchy fields (`children`, `kind`, `recording_count`, `space_id`, ...)
+- `ForbiddenException` for HTTP 403 responses
+
+### Changed
+- Folders are treated as a current public API resource rather than a legacy endpoint
+
 ## v1.3.0 - 2026-07-15
 
 ### What's Changed

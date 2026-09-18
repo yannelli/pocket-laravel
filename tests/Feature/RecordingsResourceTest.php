@@ -566,4 +566,58 @@ describe('RecordingsResource', function () {
 
         expect($query['limit'])->toBe('100'); // Should be capped at 100
     });
+
+    it('maps current recording list fields including recorded_by and translation', function () {
+        $client = createMockClient([
+            jsonResponse([
+                'success' => true,
+                'data' => [[
+                    'id' => 'rec_123',
+                    'title' => 'Team Standup',
+                    'folder_id' => 'folder_456',
+                    'duration' => 1800,
+                    'state' => 'completed',
+                    'language' => 'English',
+                    'recorded_by' => [
+                        'user_id' => 'usr_001',
+                        'display_name' => 'Alice Liu',
+                        'email' => 'alice@example.com',
+                    ],
+                    'recording_at' => '2026-03-15T09:00:00Z',
+                    'created_at' => '2026-03-15T09:00:00Z',
+                    'updated_at' => '2026-03-15T09:30:00Z',
+                    'summarizations' => null,
+                    'summarizations_errors' => ['summarizer timed out'],
+                    'transcript_error' => null,
+                    'translation' => [
+                        'id' => 'tr_1',
+                        'detected_language' => 'en',
+                        'to_language' => 'es',
+                        'processing_status' => 'completed',
+                        'created_at' => '2026-03-15T09:20:00Z',
+                        'updated_at' => '2026-03-15T09:21:00Z',
+                    ],
+                    'tags' => [
+                        ['id' => 'tag_1', 'name' => 'standup', 'color' => '#00ff00'],
+                    ],
+                ]],
+                'pagination' => [
+                    'page' => 1,
+                    'limit' => 20,
+                    'total' => 1,
+                    'total_pages' => 1,
+                    'has_more' => false,
+                ],
+            ]),
+        ]);
+
+        $recording = (new RecordingsResource($client))->list()->first();
+
+        expect($recording->recordedBy?->userId)->toBe('usr_001')
+            ->and($recording->recordedBy?->displayName)->toBe('Alice Liu')
+            ->and($recording->recordingAt?->format('Y-m-d'))->toBe('2026-03-15')
+            ->and($recording->translation?->toLanguage)->toBe('es')
+            ->and($recording->summarizationsErrors)->toBe(['summarizer timed out'])
+            ->and($recording->hasTranscript())->toBeFalse();
+    });
 });
